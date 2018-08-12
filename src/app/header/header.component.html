@@ -1,1 +1,32 @@
-<h1>This is the header component</h1>
+<nav class="navbar navbar-expand-sm navbar-dark" style="background-color:#89231a;">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            Cheftopia
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mobile-nav" aria-expanded="false" aria-label="Toggle navigation"
+            (click)="isMobileNavCollapsed = !isMobileNavCollapsed" [attr.aria-expanded]="!isMobileNavCollapsed" aria-controls="mobile-nav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mobile-nav" [ngbCollapse]="isMobileNavCollapsed">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Recipes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="dropdown" href="#">Shopping List</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" (click)="isManageNavCollapsed = !isManageNavCollapsed" role="button" aria-haspopup="true"
+                        aria-expanded="false" [attr.aria-expanded]="!isManageNavCollapsed" aria-controls="mobile-nav">Manage</a>
+                    <div class="dropdown-menu" id="manage-nav" [ngbCollapse]="isManageNavCollapsed">
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
