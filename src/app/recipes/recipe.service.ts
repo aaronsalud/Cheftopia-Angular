@@ -3,6 +3,7 @@ import { Recipe } from './recipe.model';
 
 export class RecipeService {
   recipeSelected = new EventEmitter<Recipe>();
+  activeRecipeItem: Recipe;
   private recipes: Recipe[] = [
     new Recipe(
       'Chicken Inasal',
@@ -20,4 +21,9 @@ export class RecipeService {
     // Return as a new Recipe array
     return this.recipes.slice();
   }
+
+  setActiveRecipeItem(recipe :Recipe){
+    this.activeRecipeItem = recipe;
+  }
+
 }
