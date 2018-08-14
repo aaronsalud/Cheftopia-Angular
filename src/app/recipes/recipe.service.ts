@@ -13,7 +13,7 @@ export class RecipeService {
     new Recipe(
       'Chicken Tikka',
       'This is the recipe',
-      'https://images.summitmedia-digital.com/yummyph/images/04-2013_recipes/04-2013_yummy-ph_recipe_image_sari-jorges-chicken-inasal_main.jpg'
+      'http://assets.kraftfoods.com/recipe_images/opendeploy/173356_640x428.jpg'
     )
   ];
 
