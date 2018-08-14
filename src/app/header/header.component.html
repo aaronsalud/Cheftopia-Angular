@@ -17,11 +17,10 @@
                     <a class="nav-link" (click)="onSelect('shopping-list')" data-toggle="dropdown" href="#">Shopping List</a>
                 </li>
             </ul>
-            <ul class="navbar-nav ml-auto">
+            <ul class="navbar-nav ml-auto" ngbDropdown>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" (click)="isManageNavCollapsed = !isManageNavCollapsed" role="button" aria-haspopup="true"
-                        aria-expanded="false" [attr.aria-expanded]="!isManageNavCollapsed" aria-controls="mobile-nav">Manage</a>
-                    <div class="dropdown-menu" id="manage-nav" [ngbCollapse]="isManageNavCollapsed">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" aria-haspopup="true" aria-controls="mobile-nav" ngbDropdownToggle>Manage</a>
+                    <div class="dropdown-menu" id="manage-nav" ngbDropdownMenu>
                         <a class="dropdown-item" href="#">Action</a>
                         <a class="dropdown-item" href="#">Another action</a>
                     </div>
