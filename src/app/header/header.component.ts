@@ -11,7 +11,6 @@ import {
 export class HeaderComponent {
   // Collapse all menu dropdowns
   isMobileNavCollapsed = true;
-  isManageNavCollapsed = true;
 
   @Output()
   featureSelected = new EventEmitter<string>();
