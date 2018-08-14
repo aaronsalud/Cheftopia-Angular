@@ -9,6 +9,8 @@ import { Recipe } from '../recipe.model';
 export class RecipeListComponent implements OnInit {
   @Output()
   onSelectRecipe = new EventEmitter<Recipe>();
+  @Output()
+  allRecipes = new EventEmitter<Recipe[]>();
   recipes: Recipe[] = [
     new Recipe(
       'Chicken Inasal',
@@ -16,7 +18,7 @@ export class RecipeListComponent implements OnInit {
       'https://images.summitmedia-digital.com/yummyph/images/04-2013_recipes/04-2013_yummy-ph_recipe_image_sari-jorges-chicken-inasal_main.jpg'
     ),
     new Recipe(
-      'Chicken Inasal',
+      'Chicken Tikka',
       'This is the recipe',
       'https://images.summitmedia-digital.com/yummyph/images/04-2013_recipes/04-2013_yummy-ph_recipe_image_sari-jorges-chicken-inasal_main.jpg'
     )
@@ -28,5 +30,7 @@ export class RecipeListComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.allRecipes.emit(this.recipes);
+  }
 }
