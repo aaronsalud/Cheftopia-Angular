@@ -1,6 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
+import { appRoutes } from './app.routes';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
@@ -23,8 +26,9 @@ import { ShoppingListService } from './components/shopping-list/shopping-list.se
     ShoppingListComponent,
     ShoppingEditComponent
   ],
-  imports: [BrowserModule, NgbModule.forRoot()],
+  imports: [BrowserModule, NgbModule.forRoot(), RouterModule.forRoot(appRoutes,
+    { enableTracing: true })],
   providers: [ShoppingListService],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }
