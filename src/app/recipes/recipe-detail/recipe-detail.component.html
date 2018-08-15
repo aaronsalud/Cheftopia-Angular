@@ -17,7 +17,8 @@
             <span class="caret"></span>
           </button>
           <div class="dropdown-menu" ngbDropdownMenu>
-            <a class="dropdown-item" href="#">Add Ingredient to Shopping List</a>
+            <a class="dropdown-item" (click)="addIngredientsToShoppingList(recipe.ingredients)" href="#">Add Ingredient to
+              Shopping List</a>
             <a class="dropdown-item" href="#">Edit Recipe</a>
             <a class="dropdown-item" href="#">Delete Recipe</a>
           </div>
