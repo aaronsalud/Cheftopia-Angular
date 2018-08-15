@@ -9,3 +9,11 @@
   color: #464646;
   text-align: center;
 }
+
+.recipe-actions-dropdown .dropdown-item{
+  cursor:pointer;
+}
+
+.recipe-detail img{
+  border-radius:3px;
+}

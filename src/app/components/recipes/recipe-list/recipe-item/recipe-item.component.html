@@ -1,4 +1,4 @@
-<a class="list-group-item list-group-item-action clearfix" (click)="onSelected()" style="color:#464646;" [ngClass]="{'selected-recipe-item': isActive}">
+<div class="recipe-item list-group-item list-group-item-action clearfix" (click)="onSelected()" style="color:#464646;" [ngClass]="{'selected-recipe-item': isActive}">
   <div class="float-left">
     <h4 class="mb-1">{{recipe.name}}</h4>
     <p class="mb-1">{{recipe.description}}</p>
@@ -6,4 +6,4 @@
   <span class="float-right">
     <img [src]="recipe.imagePath" class="img-responsive" alt="{{recipe.name}}" style="max-height:50px;">
   </span>
-</a>
+</div>
