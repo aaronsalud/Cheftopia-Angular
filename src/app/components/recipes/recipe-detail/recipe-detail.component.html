@@ -12,10 +12,8 @@
     </div>
     <div class="row">
       <div class="col-12">
-        <div class="btn-group" ngbDropdown>
-          <button class="btn btn-primary dropdown-toggle" type="button" ngbDropdownToggle>Manage Recipe
-            <span class="caret"></span>
-          </button>
+        <div class="btn-group dropdown" ngbDropdown>
+          <button class="btn btn-primary dropdown-toggle" type="button" ngbDropdownToggle>Manage Recipe</button>
           <div class="dropdown-menu" ngbDropdownMenu>
             <a class="dropdown-item" (click)="addIngredientsToShoppingList(recipe.ingredients)">Add Ingredient to
               Shopping List</a>
