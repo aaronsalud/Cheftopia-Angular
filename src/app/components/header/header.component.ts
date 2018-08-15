@@ -2,7 +2,7 @@ import {
   Component,
   EventEmitter,
   Output
-} from '../../../node_modules/@angular/core';
+} from '@angular/core';
 
 @Component({
   selector: 'app-header',
