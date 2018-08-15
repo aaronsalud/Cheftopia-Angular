@@ -1,5 +1,5 @@
 .recipe-detail-placeholder {
-  min-height: 226px;
+  height: calc(100vh - 125px);
 }
 
 .recipe-detail-placeholder p {
