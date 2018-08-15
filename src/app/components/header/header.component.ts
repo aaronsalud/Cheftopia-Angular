@@ -1,7 +1,5 @@
 import {
-  Component,
-  EventEmitter,
-  Output
+  Component
 } from '@angular/core';
 
 @Component({
@@ -11,10 +9,4 @@ import {
 export class HeaderComponent {
   // Collapse all menu dropdowns
   isMobileNavCollapsed = true;
-
-  @Output()
-  featureSelected = new EventEmitter<string>();
-  onSelect(feature: string) {
-    this.featureSelected.emit(feature);
-  }
 }
