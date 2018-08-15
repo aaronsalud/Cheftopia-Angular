@@ -9,7 +9,6 @@ import { Ingredient } from '../../shared/ingredient.model';
   styleUrls: ['./recipe-detail.component.css']
 })
 export class RecipeDetailComponent implements OnInit {
-  @Input()
   recipe: Recipe;
 
   constructor(private recipeService: RecipeService) {}
@@ -18,5 +17,9 @@ export class RecipeDetailComponent implements OnInit {
     this.recipeService.addIngredientsToShoppingList(ingredients);
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.recipeService.recipeSelected.subscribe(
+      (recipe: Recipe) => (this.recipe = recipe)
+    );
+  }
 }
