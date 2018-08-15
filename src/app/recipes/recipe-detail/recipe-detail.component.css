@@ -1,0 +1,11 @@
+.recipe-detail-placeholder {
+  min-height: 226px;
+}
+
+.recipe-detail-placeholder p {
+  display: inline-block;
+  margin: auto;
+  font-size: 28px;
+  color: #464646;
+  text-align: center;
+}
