@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { RecipeService } from "../recipe.service";
+import { ActivatedRoute, Params } from "@angular/router";
 
 @Component({
     selector: 'app-recipe-form',
@@ -8,8 +9,17 @@ import { RecipeService } from "../recipe.service";
     providers: [RecipeService]
   })
   export class RecipeFormComponent implements OnInit {
-    constructor() {}
+    id: number;
+    editMode = false;
+    constructor(private route: ActivatedRoute) {}
   
-    ngOnInit() {}
+    ngOnInit() {
+      this.route.params.subscribe((params: Params)=>{
+        this.id = +params['id'];
+        // Toggle edit mode if the id is set
+        this.editMode = params['id'] != null;
+
+      })
+    }
   }
   
