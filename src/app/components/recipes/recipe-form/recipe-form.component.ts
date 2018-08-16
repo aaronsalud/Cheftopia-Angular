@@ -27,6 +27,10 @@ export class RecipeFormComponent implements OnInit {
     });
   }
 
+  onSubmit() {
+    console.log(this.recipeForm);
+  }
+
   private initForm() {
     let recipeName = '';
     let recipeImagePath = '';
