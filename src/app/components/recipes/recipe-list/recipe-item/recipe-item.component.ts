@@ -8,20 +8,11 @@ Recipe;
   styleUrls: ['./recipe-item.component.css']
 })
 export class RecipeItemComponent implements OnInit {
-  @Input()
-  recipe: Recipe;
-  isActive = false;
+  @Input() recipe: Recipe;
+  @Input() index: number;
 
   constructor(private recipeService: RecipeService) {}
 
-  onSelected() {
-    this.recipeService.setActiveRecipeItem(this.recipe);
-  }
-
   ngOnInit() {
-    this.recipeService.recipeSelected.subscribe(
-      (recipe: Recipe) =>
-        this.recipe == recipe ? (this.isActive = true) : (this.isActive = false)
-    );
   }
 }
