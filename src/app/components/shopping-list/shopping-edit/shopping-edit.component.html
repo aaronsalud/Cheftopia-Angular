@@ -16,7 +16,7 @@
           <button class="btn btn-success mr-1" type="submit" [disabled]="!form.valid">{{ editMode ? 'Save Changes' : 'Add
             Item'}}
           </button>
-          <button class="btn btn-danger mr-1" type="button">Delete</button>
+          <button *ngIf="editMode" class="btn btn-danger mr-1" type="button" (click)="deleteItem()">Delete</button>
           <button class="btn btn-primary mr-1" type="button" (click)="resetForm()">Clear</button>
         </div>
       </div>
