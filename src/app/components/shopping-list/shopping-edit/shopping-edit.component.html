@@ -14,9 +14,10 @@
       <div class="row mt-3">
         <div class="col-12">
           <button class="btn btn-success mr-1" type="submit" [disabled]="!form.valid">{{ editMode ? 'Save Changes' : 'Add
-            Item'}}</button>
+            Item'}}
+          </button>
           <button class="btn btn-danger mr-1" type="button">Delete</button>
-          <button class="btn btn-primary mr-1" type="button">Clear</button>
+          <button class="btn btn-primary mr-1" type="button" (click)="resetForm()">Clear</button>
         </div>
       </div>
     </form>
