@@ -3,8 +3,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
-import { appRoutes } from './app.routes';
-
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
 import { RecipesComponent } from './components/recipes/recipes.component';
@@ -14,6 +12,7 @@ import { RecipeItemComponent } from './components/recipes/recipe-list/recipe-ite
 import { ShoppingListComponent } from './components/shopping-list/shopping-list.component';
 import { ShoppingEditComponent } from './components/shopping-list/shopping-edit/shopping-edit.component';
 import { ShoppingListService } from './components/shopping-list/shopping-list.service';
+import { AppRoutingModule } from './routes/app-routing.module';
 
 @NgModule({
   declarations: [
@@ -26,8 +25,7 @@ import { ShoppingListService } from './components/shopping-list/shopping-list.se
     ShoppingListComponent,
     ShoppingEditComponent
   ],
-  imports: [BrowserModule, NgbModule.forRoot(), RouterModule.forRoot(appRoutes,
-    { enableTracing: true })],
+  imports: [BrowserModule, AppRoutingModule, NgbModule.forRoot(), ],
   providers: [ShoppingListService],
   bootstrap: [AppComponent]
 })
