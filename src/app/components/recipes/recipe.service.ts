@@ -28,6 +28,10 @@ export class RecipeService {
     return this.recipes.slice();
   }
 
+  getRecipeByIndex(id: number){
+    return this.recipes[id];
+  }
+
   setActiveRecipeItem(recipe: Recipe) {
     this.recipeSelected.emit(recipe);
   }
