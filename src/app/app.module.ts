@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppRoutingModule } from './routes/app-routing.module';
@@ -27,7 +27,13 @@ import { ShoppingListService } from './components/shopping-list/shopping-list.se
     ShoppingListComponent,
     ShoppingEditComponent
   ],
-  imports: [BrowserModule, AppRoutingModule, FormsModule, NgbModule.forRoot()],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgbModule.forRoot()
+  ],
   providers: [ShoppingListService],
   bootstrap: [AppComponent]
 })
