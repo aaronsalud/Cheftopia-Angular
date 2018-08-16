@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RecipeService } from '../recipe.service';
 import { ActivatedRoute, Params } from '@angular/router';
 import { FormGroup, FormControl, FormArray } from '@angular/forms';
+import { NG_MODEL_WITH_FORM_CONTROL_WARNING } from '@angular/forms/src/directives';
 
 @Component({
   selector: 'app-recipe-form',
@@ -29,6 +30,16 @@ export class RecipeFormComponent implements OnInit {
 
   onSubmit() {
     console.log(this.recipeForm);
+  }
+
+  addIngredientInputGroup() {
+    // Cast to FormArray
+    (<FormArray>this.recipeForm.get('ingredients')).push(
+      new FormGroup({
+        name: new FormControl(),
+        amount: new FormControl()
+      })
+    );
   }
 
   private initForm() {
