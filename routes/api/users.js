@@ -68,6 +68,50 @@ router.post('/register', (req, res) => {
     });
 });
 
+// @route POST api /users/login
+// @desc Login user / Returning JWT Token
+// @access Public
+router.post('/login', (req, res) => {
+    const { errors, isValid } = validateLoginInput(req.body);
+
+    // Check Validation
+    if (!isValid) {
+        return res.status(400).json(errors);
+    }
+
+    const email = req.body.email;
+    const password = req.body.password;
+
+    // Find user by email
+    User.findOne({ where: { email } }).then(user => {
+        //Check for user
+        if (!user) {
+            errors.email = 'User not found';
+            return res.status(404).json(errors);
+        }
+
+        // Check Password
+        bcrypt.compare(password, user.password).then(isMatch => {
+            // If password is incorrect throw an error
+            if (!isMatch) {
+                errors.password = 'Password incorrect';
+                return res.status(400).json(errors);
+            }
+
+            // Sign Token with payload and set token expiry to a week
+            const payload = { id: user.id, name: user.name, avatar: user.avatar };
+            jwt.sign(
+                payload,
+                keys.secretOrKey,
+                { expiresIn: 604800 },
+                (err, token) => {
+                    res.json({ success: true, token: 'Bearer ' + token });
+                }
+            );
+        });
+    });
+});
+
 
 // @route Get api /users/current
 // @desc Return current user
