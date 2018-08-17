@@ -12,7 +12,7 @@ const router = express.Router();
 
 // Load models
 const models = require('../../models');
-
+const { User } = models;
 // @route GET api/users/test
 // @desc Tests users route
 // @access Public
@@ -22,8 +22,7 @@ router.get('/test', (req, res) => res.json({ msg: 'User test route works' }));
 // @desc Get All Users
 // @access Public
 router.get('/all', (req, res) => {
-    models.User.findAll().then(data => res.json(data)).catch(err => res.json(err));
+    User.findAll().then(data => res.json(data)).catch(err => res.json(err));
 });
-
 
 module.exports = router;
