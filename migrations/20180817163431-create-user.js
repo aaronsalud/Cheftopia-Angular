@@ -20,7 +20,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull:false
       },
-      gravatar: {
+      avatar: {
         type: Sequelize.STRING,
         allowNull:true
       },
