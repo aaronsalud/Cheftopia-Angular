@@ -1,11 +1,15 @@
-import { EventEmitter, Injectable } from '@angular/core';
-import { Recipe } from './recipe.model';
+import { Injectable } from '@angular/core';
 import { Ingredient } from '../shared/ingredient.model';
 import { ShoppingListService } from '../shopping-list/shopping-list.service';
+import { EventEmitter } from 'protractor';
+import { Recipe } from './recipe.model';
+import { Subject } from 'rxjs';
 
 @Injectable()
 export class RecipeService {
-  recipeSelected = new EventEmitter<Recipe>();
+  recipesUpdated = new Subject<Recipe[]>();
+  constructor(private shoppingListService: ShoppingListService) {}
+
   private recipes: Recipe[] = [
     new Recipe(
       'Chicken Inasal',
@@ -21,19 +25,23 @@ export class RecipeService {
     )
   ];
 
-  constructor(private shoppingListService: ShoppingListService) {}
-
   getRecipes() {
     // Return as a new Recipe array
     return this.recipes.slice();
   }
 
-  getRecipeByIndex(id: number){
+  getRecipeByIndex(id: number) {
     return this.recipes[id];
   }
 
-  setActiveRecipeItem(recipe: Recipe) {
-    this.recipeSelected.emit(recipe);
+  addRecipe(recipe: Recipe) {
+    this.recipes.push(recipe);
+    this.recipesUpdated.next(this.recipes.slice());
+  }
+
+  editRecipe(index: number, newRecipe: Recipe) {
+    this.recipes[index] = newRecipe;
+    this.recipesUpdated.next(this.recipes.slice());
   }
 
   addIngredientsToShoppingList(ingredients: Ingredient[]) {
