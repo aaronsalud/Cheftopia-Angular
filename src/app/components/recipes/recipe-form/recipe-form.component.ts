@@ -2,13 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { RecipeService } from '../recipe.service';
 import { ActivatedRoute, Params } from '@angular/router';
 import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
-import { NG_MODEL_WITH_FORM_CONTROL_WARNING } from '@angular/forms/src/directives';
 
 @Component({
   selector: 'app-recipe-form',
   templateUrl: './recipe-form.component.html',
-  styleUrls: ['./recipe-form.component.css'],
-  providers: [RecipeService]
+  styleUrls: ['./recipe-form.component.css']
 })
 export class RecipeFormComponent implements OnInit {
   id: number;
@@ -29,7 +27,11 @@ export class RecipeFormComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.recipeForm);
+    if (this.editMode) {
+      this.recipeService.editRecipe(this.id, this.recipeForm.value);
+    } else {
+      this.recipeService.addRecipe(this.recipeForm.value);
+    }
   }
 
   addIngredientInputGroup() {
