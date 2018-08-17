@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const Sequelize = require('sequelize');
 
-// const users = require('./routes/api/users');
+const users = require('./routes/api/users');
 // const profile = require('./routes/api/profile');
 // const posts = require('./routes/api/posts');
 
@@ -35,7 +35,7 @@ sequelize
 // require('./config/passport')(passport);
 
 // Use Routes
-// app.use('/api/users', users);
+app.use('/api/users', users);
 // app.use('/api/profile', profile);
 // app.use('/api/posts', posts);
 

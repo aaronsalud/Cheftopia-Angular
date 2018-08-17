@@ -5,8 +5,12 @@ module.exports = (sequelize, DataTypes) => {
     password: DataTypes.STRING,
     email: DataTypes.STRING,
     gravatar: DataTypes.STRING,
-  }, {});
-  User.associate = function(models) {
+  }, {
+      timestamps: true,
+      underscored: true,
+      tableName: 'users'
+    });
+  User.associate = function (models) {
     // associations can be defined here
   };
   return User;
