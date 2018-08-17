@@ -1,0 +1,19 @@
+{
+  "name": "cheftopia",
+  "version": "1.0.0",
+  "description": "A social network for chefs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aaronsalud/Cheftopia-Angular.git"
+  },
+  "author": "Aaron Mikhail Salud",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aaronsalud/Cheftopia-Angular/issues"
+  },
+  "homepage": "https://github.com/aaronsalud/Cheftopia-Angular#readme"
+}
