@@ -9,21 +9,30 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull:false
       },
       password: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull:false
       },
       email: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull:false
+      },
+      gravatar: {
+        type: Sequelize.STRING,
+        allowNull:true
       },
       created_at: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE(3),
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP(3)')
       },
       updated_at: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE(3),
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP(3)')
       }
     });
   },
