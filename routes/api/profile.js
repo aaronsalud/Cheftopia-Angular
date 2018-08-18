@@ -145,4 +145,41 @@ router.post(
   }
 );
 
+// @route DELETE api/profile/
+// @desc  Delete user and profile
+// @access Private
+router.delete(
+  '/',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    // Profile.findOneAndRemove({ user: req.user.id }).then(profile => {
+    //   User.findOneAndRemove({ _id: req.user.id })
+    //     .then(() => res.json({ success: true }))
+    //     .catch(err => res.status(404).json(err));
+    // });
+
+    Profile.destroy({ returning: true, where: { user_id: req.user.id } })
+      .then(profile => {
+        if (profile) {
+          User.destroy({
+            returning: true,
+            where: { id: profile.user_id }
+          })
+            .then(() => res.json({ success: true }))
+            .catch(err => res.status(404).json(err));
+        } else {
+          res.status(404).json({
+            error: 'No profiles to delete for this user'
+          });
+        }
+      })
+      .catch(err =>
+        res.status(404).json({
+          error: 'Profile not found',
+          more_details: err
+        })
+      );
+  }
+);
+
 module.exports = router;
