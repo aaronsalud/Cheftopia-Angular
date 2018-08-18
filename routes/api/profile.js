@@ -67,4 +67,34 @@ router.get('/user/:user_id', (req, res) => {
     );
 });
 
+// @route GET api/profile/all
+// @desc  Get all profiles
+// @access Public
+router.get('/all', (req, res) => {
+  const errors = {};
+  Profile.findAll({
+    attributes: { exclude: ['user_id'] },
+    include: [
+      {
+        model: User,
+        as: 'user',
+        required: true,
+        attributes: ['id', 'name', 'avatar']
+      }
+    ]
+  })
+    .then(profiles => {
+      if (!profiles) {
+        errors.noprofile = 'There are no profiles';
+        return res.status(404).json(errors);
+      }
+      res.json(profiles);
+    })
+    .catch(err =>
+      res
+        .status(404)
+        .json({ error: 'There are no profiles', more_details: err })
+    );
+});
+
 module.exports = router;
