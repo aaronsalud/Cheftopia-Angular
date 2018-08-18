@@ -18,15 +18,18 @@ app.use(bodyParser.json());
 const db = require('./config/keys').postgresURI;
 
 // Connect to PostgresSQL
-const sequelize = new Sequelize(db, { dialect: 'postgres' });
+const sequelize = new Sequelize(db, {
+  dialect: 'postgres',
+  operatorsAliases: false
+});
 sequelize
-    .authenticate()
-    .then(() => {
-        console.log('PostgresSQL DB Connection has been established successfully.');
-    })
-    .catch(err => {
-        console.error('Unable to connect to the database:', err);
-    });
+  .authenticate()
+  .then(() => {
+    console.log('PostgresSQL DB Connection has been established successfully.');
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+  });
 
 // Passport middleware
 app.use(passport.initialize());
@@ -41,11 +44,11 @@ app.use('/api/users', users);
 
 // Server static assets if in production
 if (process.env.NODE_ENV === 'production') {
-    // Set static folder
-    app.use(express.static('ui/build'));
-    app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname, 'ui', 'build', 'index.html'));
-    });
+  // Set static folder
+  app.use(express.static('ui/build'));
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'ui', 'build', 'index.html'));
+  });
 }
 
 const port = process.env.PORT || 5000;
