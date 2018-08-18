@@ -5,6 +5,9 @@ const passport = require('passport');
 // Load Profile Model
 const { Profile, User } = require('../../models');
 
+//Load Input Validation
+const validateProfileInput = require('../../validators/profile');
+
 // @route GET api/profile
 // @desc Get Current User profile
 // @access Private
@@ -84,7 +87,7 @@ router.get('/all', (req, res) => {
     ]
   })
     .then(profiles => {
-      if (!profiles) {
+      if (!profiles || profiles.length === 0) {
         errors.noprofile = 'There are no profiles';
         return res.status(404).json(errors);
       }
@@ -96,5 +99,50 @@ router.get('/all', (req, res) => {
         .json({ error: 'There are no profiles', more_details: err })
     );
 });
+
+// @route POST api/profile
+// @desc Create or Edit user profile
+// @access Private
+router.post(
+  '/',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateProfileInput(req.body);
+
+    // Check Validation
+    if (!isValid) {
+      // Return any errors with 400 status
+      return res.status(400).json(errors);
+    }
+
+    // Get fields
+    const profileFields = {};
+    profileFields.user = req.user.id;
+
+    const fields = ['restaurant', 'location', 'bio', 'occupation', 'website'];
+
+    fields.forEach(field => {
+      if (req.body[field]) profileFields[field] = req.body[field];
+    });
+
+    Profile.findOne({ where: { user_id: req.user.id } }).then(profile => {
+      if (profile) {
+        Profile.update(profileFields, {
+          returning: true,
+          where: { id: profile.id }
+        })
+          .then(([rowsUpdated, [updatedProfile]]) => res.json(updatedProfile))
+          .catch(err => res.status(404).json(err));
+      } else {
+        profileFields.user_id = req.user.id;
+        Profile.create(profileFields, {
+          returning: true
+        })
+          .then(createdProfile => res.json(createdProfile))
+          .catch(err => res.status(404).json(err));
+      }
+    });
+  }
+);
 
 module.exports = router;
