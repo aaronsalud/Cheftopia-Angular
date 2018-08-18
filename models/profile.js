@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
   Profile.associate = function(models) {
     // associations can be defined here
     const { User } = models;
-    Profile.belongsTo(User);
+    Profile.belongsTo(User, { as: 'user' });
   };
   return Profile;
 };
