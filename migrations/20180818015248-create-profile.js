@@ -12,6 +12,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       bio: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       restaurant: {
@@ -21,6 +22,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       occupation: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       user_id: {
