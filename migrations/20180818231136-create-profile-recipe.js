@@ -27,6 +27,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('ProfileRecipes');
+    return queryInterface.dropTable('profile_recipe');
   }
 };
