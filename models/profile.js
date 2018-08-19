@@ -17,9 +17,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
   Profile.associate = function(models) {
-    // associations can be defined here
-    const { User } = models;
+    const { User, Recipe, ProfileRecipe } = models;
     Profile.belongsTo(User, { as: 'user' });
+    Profile.belongsToMany(Recipe, {
+      as: 'recipes',
+      through: ProfileRecipe
+    });
   };
   return Profile;
 };
