@@ -18,7 +18,6 @@ module.exports = (sequelize, DataTypes) => {
     Recipe.belongsToMany(Profile, {
       as: 'profiles',
       through: ProfileRecipe
-      // foreignKey: 'profile_id'
     });
   };
   return Recipe;
