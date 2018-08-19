@@ -7,6 +7,7 @@ const { Profile, User, Recipe } = require('../../models');
 
 //Load Input Validation
 const validateProfileInput = require('../../validators/profile');
+const validateRecipeInput = require('../../validators/recipe');
 
 // @route GET api/profile
 // @desc Get Current User profile
@@ -90,6 +91,13 @@ router.get('/all', (req, res) => {
         as: 'user',
         required: true,
         attributes: ['id', 'name', 'avatar']
+      },
+      {
+        model: Recipe,
+        as: 'recipes',
+        through: {
+          attributes: []
+        }
       }
     ]
   })
@@ -159,12 +167,6 @@ router.delete(
   '/',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    // Profile.findOneAndRemove({ user: req.user.id }).then(profile => {
-    //   User.findOneAndRemove({ _id: req.user.id })
-    //     .then(() => res.json({ success: true }))
-    //     .catch(err => res.status(404).json(err));
-    // });
-
     Profile.destroy({ returning: true, where: { user_id: req.user.id } })
       .then(profile => {
         if (profile) {
@@ -186,6 +188,49 @@ router.delete(
           more_details: err
         })
       );
+  }
+);
+
+// @route POST api/profile/recipe
+// @desc  Add recipe to profile
+// @access Private
+router.post(
+  '/recipe',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateRecipeInput(req.body);
+
+    // Check Validation
+    if (!isValid) {
+      // Return any errors with 400 status
+      return res.status(400).json(errors);
+    }
+
+    Profile.findOne({
+      where: { user_id: req.user.id }
+    }).then(profile => {
+      const fields = ['name', 'image', 'description'];
+      let newRecipe = {};
+
+      fields.forEach(field => {
+        if (req && req.body && req.body[field]) {
+          newRecipe[field] = req.body[field];
+        }
+      });
+
+      // Create new recipe
+      Recipe.create(newRecipe, { returning: true })
+        .then(createdRecipe => {
+          // Add recipe to pivot with profile
+          profile
+            .addRecipe(createdRecipe.id)
+            .then(response => res.json(createdRecipe))
+            .catch(err => res.status(404).json(err));
+        })
+        .catch(err =>
+          res.status(404).json({ error: 'Failed to create new recipe' })
+        );
+    });
   }
 );
 
