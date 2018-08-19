@@ -3,7 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 
 // Load Profile Model
-const { Profile, User } = require('../../models');
+const { Profile, User, Recipe } = require('../../models');
 
 //Load Input Validation
 const validateProfileInput = require('../../validators/profile');
@@ -25,6 +25,13 @@ router.get(
           as: 'user',
           required: true,
           attributes: ['id', 'name', 'avatar']
+        },
+        {
+          model: Recipe,
+          as: 'recipes',
+          through: {
+            attributes: []
+          }
         }
       ]
     })
