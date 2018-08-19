@@ -283,4 +283,50 @@ router.put(
   }
 );
 
+// @route DELETE api/profile/recipe/:id
+// @desc  Delete a recipe from a profile
+// @access Private
+router.delete(
+  '/recipe/:id',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateRecipeInput(req.body);
+
+    // Check Validation
+    if (!isValid) {
+      // Return any errors with 400 status
+      return res.status(400).json(errors);
+    }
+
+    // Ensure that the only the user currently logged in can edit the recipe
+    Profile.findOne({
+      where: { user_id: req.user.id }
+    })
+      .then(profile => {
+        // Delete the recipe
+        Recipe.destroy({
+          returning: true,
+          where: { id: req.params.id }
+        })
+          .then(deletedRecipe => {
+            if (deletedRecipe) {
+              // Remove deleted recipe id from the profile recipe pivot table
+              profile
+                .removeRecipe(deletedRecipe.id)
+                .then(() => res.json({ success: true }))
+                .catch(err => res.status(404).json(err));
+            } else {
+              throw { error: 'Recipe item not found' };
+            }
+          })
+          .catch(err => res.status(404).json(err));
+      })
+      .catch(err =>
+        res
+          .status(401)
+          .json({ error: 'User is unauthorized to perform this action' })
+      );
+  }
+);
+
 module.exports = router;
