@@ -208,29 +208,78 @@ router.post(
 
     Profile.findOne({
       where: { user_id: req.user.id }
-    }).then(profile => {
-      const fields = ['name', 'image', 'description'];
-      let newRecipe = {};
+    })
+      .then(profile => {
+        const fields = ['name', 'image', 'description'];
+        let newRecipe = {};
 
-      fields.forEach(field => {
-        if (req && req.body && req.body[field]) {
-          newRecipe[field] = req.body[field];
-        }
-      });
+        fields.forEach(field => {
+          if (req && req.body && req.body[field]) {
+            newRecipe[field] = req.body[field];
+          }
+        });
 
-      // Create new recipe
-      Recipe.create(newRecipe, { returning: true })
-        .then(createdRecipe => {
-          // Add recipe to pivot with profile
-          profile
-            .addRecipe(createdRecipe.id)
-            .then(response => res.json(createdRecipe))
-            .catch(err => res.status(404).json(err));
+        // Create new recipe
+        Recipe.create(newRecipe, { returning: true })
+          .then(createdRecipe => {
+            // Add recipe to pivot with profile
+            profile
+              .addRecipe(createdRecipe.id)
+              .then(response => res.json(createdRecipe))
+              .catch(err => res.status(404).json(err));
+          })
+          .catch(err =>
+            res.status(404).json({ error: 'Failed to create new recipe' })
+          );
+      })
+      .catch(err =>
+        res.status(401).json({ error: 'User have not set up a profile yet' })
+      );
+  }
+);
+
+// @route PUT api/profile/recipe/:id
+// @desc  Update a recipe from a profile
+// @access Private
+router.put(
+  '/recipe/:id',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateRecipeInput(req.body);
+
+    // Check Validation
+    if (!isValid) {
+      // Return any errors with 400 status
+      return res.status(400).json(errors);
+    }
+
+    // Ensure that the only the user currently logged in can edit the recipe
+    Profile.findOne({
+      where: { user_id: req.user.id }
+    })
+      .then(profile => {
+        const fields = ['name', 'image', 'description'];
+        let newRecipe = {};
+
+        fields.forEach(field => {
+          if (req && req.body && req.body[field]) {
+            newRecipe[field] = req.body[field];
+          }
+        });
+
+        // Update recipe
+        Recipe.update(newRecipe, {
+          returning: true,
+          where: { id: req.params.id }
         })
-        .catch(err =>
-          res.status(404).json({ error: 'Failed to create new recipe' })
-        );
-    });
+          .then(([rowsUpdated, [updatedRecipe]]) => res.json(updatedRecipe))
+          .catch(err => res.status(404).json(err));
+      })
+      .catch(err =>
+        res
+          .status(401)
+          .json({ error: 'User is unauthorized to perform this action' })
+      );
   }
 );
 
