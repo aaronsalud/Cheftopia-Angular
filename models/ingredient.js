@@ -10,6 +10,14 @@ module.exports = (sequelize, DataTypes) => {
     });
   Ingredient.associate = function (models) {
     // associations can be defined here
+    const { ShoppingList, ShoppingListIngredient } = models;
+
+    ShoppingList.belongsToMany(Ingredient, {
+      as: 'shopping_lists',
+      through: ShoppingListIngredient,
+      foreignKey: 'ingredient_id',
+      otherKey: 'shoppinglist_id'
+    });
   };
   return Ingredient;
 };
