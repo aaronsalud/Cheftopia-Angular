@@ -136,4 +136,48 @@ router.put(
   }
 );
 
+// @route DELETE api/shoppinglist/:id
+// @desc Delete a Shopping List
+// @access Private
+router.delete(
+  '/:id',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateShoppingListInput(req.body);
+    // Check Validation
+    if (!isValid) {
+      // Return any errors with 400 status
+      return res.status(400).json(errors);
+    }
+    // Ensure that the only the user currently logged in can edit the shopping list
+    User.findOne({
+      where: { id: req.user.id }
+    })
+      .then(user => {
+        // Delete the shopping list
+        ShoppingList.destroy({
+          returning: true,
+          where: { id: req.params.id }
+        })
+          .then(deletedShoppingList => {
+            if (deletedShoppingList) {
+              // Remove deleted shopping list id from the profile recipe pivot table
+              user
+                .removeShopping_list(req.params.id)
+                .then(() => res.json({ success: true }))
+                .catch(err => res.status(404).json(err));
+            } else {
+              throw { error: 'Shopping List item not found' };
+            }
+          })
+          .catch(err => res.status(404).json(err));
+      })
+      .catch(err =>
+        res
+          .status(401)
+          .json({ error: 'User is unauthorized to perform this action' })
+      );
+  }
+);
+
 module.exports = router;
