@@ -7,6 +7,7 @@ const { User, ShoppingList, Ingredient } = require('../../models');
 
 //Load Input Validators
 const validateShoppingListInput = require('../../validators/shoppinglist');
+const validateIngredientsInput = require('../../validators/ingredient');
 
 // @route GET api/shoppinglist
 // @desc Get Current User shopping list
@@ -227,6 +228,57 @@ router.delete(
           .status(401)
           .json({ error: 'User is unauthorized to perform this action' })
       );
+  }
+);
+
+// @route POST api/shoppinglist/:id/ingredients
+// @desc Update a Shopping List
+// @access Private
+router.post(
+  '/:id/ingredients',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateIngredientsInput(req.body);
+
+    // Check Validation
+    if (!isValid) {
+      // Return any errors with 400 status
+      return res.status(400).json(errors);
+    }
+
+    User.findOne({
+      where: {
+        id: req.user.id
+      }
+    })
+      .then(user => {
+        const fields = ['name', 'amount'];
+        let newIngredient = {};
+
+        fields.forEach(field => {
+          if (req && req.body && req.body[field]) {
+            newIngredient[field] = req.body[field];
+          }
+        });
+
+        ShoppingList.findById(req.params.id).then(shoppingList => {
+
+          // Create new ingredient
+          Ingredient.create(newIngredient, { returning: true })
+            .then(createdIngredient => {
+              // Add recipe to pivot with profile
+              shoppingList
+                .addIngredient(createdIngredient.id)
+                .then(response => res.json(createdIngredient))
+                .catch(err => res.status(404).json(err));
+            })
+            .catch(err =>
+              res.status(404).json({ error: 'Failed to create new ingredient' })
+            );
+
+        }).catch(err => res.status(404).json(err));
+      })
+      .catch(err => res.status(404).json(err));
   }
 );
 
