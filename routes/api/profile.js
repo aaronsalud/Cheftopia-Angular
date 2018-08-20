@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 
-// Load Profile Model
+// Load Models
 const { Profile, User, Recipe } = require('../../models');
 
-//Load Input Validation
+//Load Input Validators
 const validateProfileInput = require('../../validators/profile');
 const validateRecipeInput = require('../../validators/recipe');
 
