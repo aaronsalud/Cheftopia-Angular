@@ -232,7 +232,7 @@ router.delete(
 );
 
 // @route POST api/shoppinglist/:id/ingredients
-// @desc Update a Shopping List
+// @desc Create an ingredient for a shopping list
 // @access Private
 router.post(
   '/:id/ingredients',
@@ -277,6 +277,52 @@ router.post(
             );
 
         }).catch(err => res.status(404).json(err));
+      })
+      .catch(err => res.status(404).json(err));
+  }
+);
+
+
+// @route PUT api/shoppinglist/ingredients/:id
+// @desc Update an Ingredient by id
+// @access Private
+router.put(
+  '/ingredients/:id',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateIngredientsInput(req.body);
+
+    // Check Validation
+    if (!isValid) {
+      // Return any errors with 400 status
+      return res.status(400).json(errors);
+    }
+
+    User.findOne({
+      where: {
+        id: req.user.id
+      }
+    })
+      .then(user => {
+        const fields = ['name', 'amount'];
+        let newIngredient = {};
+
+        fields.forEach(field => {
+          if (req && req.body && req.body[field]) {
+            newIngredient[field] = req.body[field];
+          }
+        });
+
+        // Update an ingredient
+        Ingredient.update(newIngredient, { where: { id: req.params.id }, returning: true })
+          .then(([rowsUpdated, [updatedIngedient]]) => {
+            if(updatedIngedient){
+            res.json(updatedIngedient);
+            }else{
+              throw {error: 'Ingredient not found'}
+            }
+
+          }).catch(err => res.status(404).json(err));
       })
       .catch(err => res.status(404).json(err));
   }
