@@ -3,7 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 
 // Load Models
-const { User, ShoppingList } = require('../../models');
+const { User, ShoppingList, Ingredient } = require('../../models');
 
 //Load Input Validators
 const validateShoppingListInput = require('../../validators/shoppinglist');
@@ -29,7 +29,15 @@ router.get(
           as: 'shopping_lists',
           where: { archived: isArchived },
           through: { attributes: [] },
-          required: false
+          required: false,
+          include: [
+            {
+              model: Ingredient,
+              as: 'ingredients',
+              through: { attributes: [] },
+              required: false
+            }
+          ]
         }
       ]
     })
