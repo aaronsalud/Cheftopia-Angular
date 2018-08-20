@@ -312,7 +312,7 @@ router.delete(
             if (deletedRecipe) {
               // Remove deleted recipe id from the profile recipe pivot table
               profile
-                .removeRecipe(deletedRecipe.id)
+                .removeRecipe(req.params.id)
                 .then(() => res.json({ success: true }))
                 .catch(err => res.status(404).json(err));
             } else {
