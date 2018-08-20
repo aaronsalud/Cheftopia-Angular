@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
   User.associate = function(models) {
     // associations can be defined here
     const { Profile, ShoppingList, UserShoppingList } = models;
-    User.hasOne(Profile, { as: 'profile' });
+    User.hasOne(Profile, { as: 'profile', foreignKey: 'user_id' });
     User.belongsToMany(ShoppingList, {
       as: 'shopping_lists',
       through: UserShoppingList,
