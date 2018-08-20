@@ -13,11 +13,20 @@ module.exports = (sequelize, DataTypes) => {
       tableName: 'recipes'
     }
   );
-  Recipe.associate = function(models) {
-    const { Profile, ProfileRecipe } = models;
+  Recipe.associate = function (models) {
+    const { Profile, ProfileRecipe, RecipeIngredient , Ingredient} = models;
     Recipe.belongsToMany(Profile, {
       as: 'profiles',
-      through: ProfileRecipe
+      through: ProfileRecipe,
+      foreignKey: 'recipe_id',
+      otherKey: 'profile_id'
+    });
+
+    Recipe.belongsToMany(Ingredient, {
+      as: 'ingredients',
+      through: RecipeIngredient,
+      foreignKey: 'recipe_id',
+      otherKey: 'ingredient_id'
     });
   };
   return Recipe;
