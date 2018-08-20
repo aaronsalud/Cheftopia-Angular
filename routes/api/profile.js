@@ -272,7 +272,14 @@ router.put(
           returning: true,
           where: { id: req.params.id }
         })
-          .then(([rowsUpdated, [updatedRecipe]]) => res.json(updatedRecipe))
+          .then(([rowsUpdated, [updatedRecipe]]) => {
+            if (updatedRecipe) {
+              res.json(updatedRecipe)
+            }
+            else {
+              throw { error: 'Recipe not found' }
+            }
+          })
           .catch(err => res.status(404).json(err));
       })
       .catch(err =>
