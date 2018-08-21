@@ -31,16 +31,14 @@ router.get(
         {
           model: Recipe,
           as: 'recipes',
-          through: {
-            attributes: []
-          },
+          required: false,
+          through: { attributes: [] },
           include: [
             {
               model: Ingredient,
               as: 'ingredients',
-              through: {
-                attributes: []
-              }
+              attributes: { exclude: ['ingredientable', 'ingredientable_id'] },
+              required: false
             }
           ]
         }
