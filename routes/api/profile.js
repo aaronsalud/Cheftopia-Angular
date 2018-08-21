@@ -232,19 +232,34 @@ router.post(
         profile
           .createRecipe(newRecipe, { returning: true })
           .then(createdRecipe => {
+            // If ingredients array exist, do a bulk create
             if (newRecipe.ingredients) {
               Ingredient.bulkCreate(newRecipe.ingredients, {
                 returning: true
               }).then(createdIngredients => {
+                // Get newly created ingredient Ids
                 const newIngredientIds = getValuesByKey(
                   createdIngredients,
                   'id'
                 );
+                // Set Ids to map recipe_ingredient pivot table
                 createdRecipe.setIngredients(newIngredientIds).then(data => {
-                  res.json(data);
+                  // Return newly created recipe with ingredients
+                  Recipe.findById(createdRecipe.id, {
+                    include: [
+                      {
+                        model: Ingredient,
+                        as: 'ingredients',
+                        through: {
+                          attributes: []
+                        }
+                      }
+                    ]
+                  }).then(recipe => res.json(recipe));
                 });
               });
             } else {
+              // Return the newly created recipe without the ingredients
               res.json(createdRecipe);
             }
           })
@@ -278,7 +293,7 @@ router.put(
       where: { user_id: req.user.id }
     })
       .then(profile => {
-        const fields = ['name', 'image', 'description'];
+        const fields = ['name', 'image', 'description', 'ingredients'];
         let newRecipe = {};
 
         fields.forEach(field => {
