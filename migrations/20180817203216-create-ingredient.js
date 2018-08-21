@@ -14,6 +14,12 @@ module.exports = {
       amount: {
         type: Sequelize.INTEGER
       },
+      ingredientable: {
+        type: Sequelize.STRING
+      },
+      ingredientable_id: {
+        type: Sequelize.INTEGER
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE(3),
