@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       tableName: 'profiles'
     }
   );
-  Profile.associate = function(models) {
+  Profile.associate = function (models) {
     const { User, Recipe, ProfileRecipe } = models;
     Profile.belongsTo(User, { as: 'user' });
     Profile.belongsToMany(Recipe, {
