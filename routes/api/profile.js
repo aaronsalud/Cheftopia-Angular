@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 
+const getValuesByKey = require('../../helpers/get-values-by-key');
 // Load Models
 const { Profile, User, Recipe, Ingredient } = require('../../models');
 
@@ -219,7 +220,7 @@ router.post(
       where: { user_id: req.user.id }
     })
       .then(profile => {
-        const fields = ['name', 'image', 'description'];
+        const fields = ['name', 'image', 'description', 'ingredients'];
         let newRecipe = {};
 
         fields.forEach(field => {
@@ -228,14 +229,24 @@ router.post(
           }
         });
 
-        // Create new recipe
-        Recipe.create(newRecipe, { returning: true })
+        profile
+          .createRecipe(newRecipe, { returning: true })
           .then(createdRecipe => {
-            // Add recipe to pivot with profile
-            profile
-              .addRecipe(createdRecipe.id)
-              .then(response => res.json(createdRecipe))
-              .catch(err => res.status(404).json(err));
+            if (newRecipe.ingredients) {
+              Ingredient.bulkCreate(newRecipe.ingredients, {
+                returning: true
+              }).then(createdIngredients => {
+                const newIngredientIds = getValuesByKey(
+                  createdIngredients,
+                  'id'
+                );
+                createdRecipe.setIngredients(newIngredientIds).then(data => {
+                  res.json(data);
+                });
+              });
+            } else {
+              res.json(createdRecipe);
+            }
           })
           .catch(err =>
             res.status(404).json({ error: 'Failed to create new recipe' })
@@ -283,10 +294,9 @@ router.put(
         })
           .then(([rowsUpdated, [updatedRecipe]]) => {
             if (updatedRecipe) {
-              res.json(updatedRecipe)
-            }
-            else {
-              throw { error: 'Recipe not found' }
+              res.json(updatedRecipe);
+            } else {
+              throw { error: 'Recipe not found' };
             }
           })
           .catch(err => res.status(404).json(err));
