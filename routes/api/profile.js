@@ -6,6 +6,10 @@ const getValuesByKey = require('../../helpers/get-values-by-key');
 // Load Models
 const { Profile, User, Recipe, Ingredient } = require('../../models');
 
+// Load model loading options
+const modelOptions = require('../../helpers/model-options');
+const loadRecipesWithIngredients = { ...modelOptions.recipes, include: [modelOptions.ingredients] };
+
 //Load Input Validators
 const validateProfileInput = require('../../validators/profile');
 const validateRecipeInput = require('../../validators/recipe');
@@ -18,30 +22,14 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     const errors = {};
+    
+
     Profile.findOne({
       attributes: { exclude: ['user_id'] },
       where: { user_id: req.user.id },
       include: [
-        {
-          model: User,
-          as: 'user',
-          required: true,
-          attributes: ['id', 'name', 'avatar']
-        },
-        {
-          model: Recipe,
-          as: 'recipes',
-          required: false,
-          through: { attributes: [] },
-          include: [
-            {
-              model: Ingredient,
-              as: 'ingredients',
-              attributes: { exclude: ['ingredientable', 'ingredientable_id'] },
-              required: false
-            }
-          ]
-        }
+        modelOptions.user,
+        loadRecipesWithIngredients
       ]
     })
       .then(profile => {
@@ -64,12 +52,8 @@ router.get('/user/:user_id', (req, res) => {
     attributes: { exclude: ['user_id'] },
     where: { user_id: req.params.user_id },
     include: [
-      {
-        model: User,
-        as: 'user',
-        required: true,
-        attributes: ['id', 'name', 'avatar']
-      }
+      modelOptions.user,
+      loadRecipesWithIngredients
     ]
   })
     .then(profile => {
@@ -94,19 +78,8 @@ router.get('/all', (req, res) => {
   Profile.findAll({
     attributes: { exclude: ['user_id'] },
     include: [
-      {
-        model: User,
-        as: 'user',
-        required: true,
-        attributes: ['id', 'name', 'avatar']
-      },
-      {
-        model: Recipe,
-        as: 'recipes',
-        through: {
-          attributes: []
-        }
-      }
+      modelOptions.user,
+      loadRecipesWithIngredients
     ]
   })
     .then(profiles => {
