@@ -7,6 +7,13 @@ const modelOptions = {
     required: true,
     attributes: ['id', 'name', 'avatar']
   },
+  users: {
+    model: User,
+    as: 'users',
+    required: true,
+    attributes: ['id', 'name', 'avatar'],
+    through: { attributes: [] }
+  },
   recipes: {
     model: Recipe,
     as: 'recipes',
