@@ -53,7 +53,10 @@ router.get('/user/:user_id', (req, res) => {
     where: { user_id: req.params.user_id },
     include: [
       modelOptions.user,
-      loadRecipesWithIngredients
+      {
+        ...loadRecipesWithIngredients,
+        where: { is_public: true }
+      }
     ]
   })
     .then(profile => {
@@ -78,7 +81,10 @@ router.get('/all', (req, res) => {
     attributes: { exclude: ['user_id'] },
     include: [
       modelOptions.user,
-      loadRecipesWithIngredients
+      {
+        ...loadRecipesWithIngredients,
+        where: { is_public: true }
+      }
     ]
   })
     .then(profiles => {
@@ -167,78 +173,6 @@ router.delete(
           error: 'Profile not found',
           more_details: err
         })
-      );
-  }
-);
-
-// @route POST api/profile/recipe
-// @desc  Add recipe to profile
-// @access Private
-router.post(
-  '/recipe',
-  passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    const { errors, isValid } = validateRecipeInput(req.body);
-
-    // Check Validation
-    if (!isValid) {
-      // Return any errors with 400 status
-      return res.status(400).json(errors);
-    }
-
-    Profile.findOne({
-      where: { user_id: req.user.id }
-    })
-      .then(profile => {
-        const fields = ['name', 'image', 'description', 'ingredients'];
-        let newRecipe = {};
-
-        fields.forEach(field => {
-          if (req && req.body && req.body[field]) {
-            newRecipe[field] = req.body[field];
-          }
-        });
-
-        profile
-          .createRecipe(newRecipe, { returning: true })
-          .then(createdRecipe => {
-            // If ingredients array exist, do a bulk create
-            if (newRecipe.ingredients) {
-              Ingredient.bulkCreate(newRecipe.ingredients, {
-                returning: true
-              }).then(createdIngredients => {
-                // Get newly created ingredient Ids
-                const newIngredientIds = getValuesByKey(
-                  createdIngredients,
-                  'id'
-                );
-                // Set Ids to map recipe_ingredient pivot table
-                createdRecipe.setIngredients(newIngredientIds).then(data => {
-                  // Return newly created recipe with ingredients
-                  Recipe.findById(createdRecipe.id, {
-                    include: [
-                      {
-                        model: Ingredient,
-                        as: 'ingredients',
-                        through: {
-                          attributes: []
-                        }
-                      }
-                    ]
-                  }).then(recipe => res.json(recipe));
-                });
-              });
-            } else {
-              // Return the newly created recipe without the ingredients
-              res.json(createdRecipe);
-            }
-          })
-          .catch(err =>
-            res.status(404).json({ error: 'Failed to create new recipe' })
-          );
-      })
-      .catch(err =>
-        res.status(401).json({ error: 'User have not set up a profile yet' })
       );
   }
 );
