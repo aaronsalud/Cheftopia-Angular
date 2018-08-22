@@ -9,15 +9,19 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       amount: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false,
       },
       ingredientable: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       ingredientable_id: {
+        allowNull: false,
         type: Sequelize.INTEGER
       },
       created_at: {
