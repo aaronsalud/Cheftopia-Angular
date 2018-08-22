@@ -7,18 +7,11 @@ const modelOptions = {
     required: true,
     attributes: ['id', 'name', 'avatar']
   },
-  users: {
-    model: User,
-    as: 'users',
-    required: true,
-    attributes: ['id', 'name', 'avatar'],
-    through: { attributes: [] }
-  },
   recipes: {
     model: Recipe,
     as: 'recipes',
     required: false,
-    through: { attributes: [] }
+    attributes: { exclude: ['profile_id'] }
   },
 
   ingredients: {
@@ -30,7 +23,7 @@ const modelOptions = {
   shoppinglist: {
     model: ShoppingList,
     as: 'shopping_lists',
-    through: { attributes: [] },
+    attributes: { exclude: ['user_id'] },
     required: false
   }
 };
