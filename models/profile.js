@@ -19,9 +19,9 @@ module.exports = (sequelize, DataTypes) => {
   Profile.associate = function (models) {
     const { User, Recipe, ProfileRecipe } = models;
     Profile.belongsTo(User, { as: 'user' });
-    Profile.belongsToMany(Recipe, {
+    Profile.hasMany(Recipe, {
       as: 'recipes',
-      through: ProfileRecipe
+      foreignKey: 'profile_id'
     });
   };
   return Profile;
