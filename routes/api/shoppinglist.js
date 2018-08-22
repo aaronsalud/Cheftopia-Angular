@@ -12,7 +12,7 @@ const modelOptions = require('../../helpers/model-options');
 const validateShoppingListInput = require('../../validators/shoppinglist');
 const validateIngredientsInput = require('../../validators/ingredient');
 
-// @route GET api/shoppinglist
+// @route GET api/shoppinglist/all
 // @desc Get Current User shopping list
 // @params { archived: 1 | 0 }
 // @access Private
@@ -29,48 +29,6 @@ router.get(
           ...modelOptions.shoppinglist,
           where: { archived: isArchived },
           include: [modelOptions.ingredients]
-        }
-      ]
-    })
-      .then(user => {
-        if (!user) {
-          throw { error: 'User not found' };
-        }
-        res.json(user.shopping_lists);
-      })
-      .catch(err => res.status(404).json(err));
-  }
-);
-
-// @route GET api/shoppinglist/:id
-// @desc Get Current User shopping list
-// @access Private
-router.get(
-  '/:id',
-  passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    const isArchived =
-      req.query.archived && req.query.archived == 1 ? true : false;
-
-    User.findOne({
-      where: {
-        id: req.user.id
-      },
-      include: [
-        {
-          model: ShoppingList,
-          as: 'shopping_lists',
-          where: { archived: isArchived },
-          through: { attributes: [] },
-          required: false,
-          include: [
-            {
-              model: Ingredient,
-              as: 'ingredients',
-              through: { attributes: [] },
-              required: false
-            }
-          ]
         }
       ]
     })
