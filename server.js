@@ -7,6 +7,7 @@ const Sequelize = require('sequelize');
 const users = require('./routes/api/users');
 const profile = require('./routes/api/profile');
 const shoppinglist = require('./routes/api/shoppinglist');
+const recipe = require('./routes/api/recipe');
 
 const app = express();
 
@@ -41,6 +42,7 @@ require('./config/passport')(passport);
 app.use('/api/users', users);
 app.use('/api/profile', profile);
 app.use('/api/shoppinglist', shoppinglist);
+app.use('/api/recipe', recipe);
 
 // Server static assets if in production
 if (process.env.NODE_ENV === 'production') {
