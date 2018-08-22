@@ -17,6 +17,14 @@ module.exports = {
       description: {
         type: Sequelize.STRING
       },
+      profile_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+      },
+      is_public: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE(3),
