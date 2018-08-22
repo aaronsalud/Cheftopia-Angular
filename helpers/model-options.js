@@ -1,5 +1,5 @@
 // Load Models
-const { User, Recipe, Ingredient, ShoppingList } = require('../models');
+const { User, Recipe, Ingredient, ShoppingList, Profile } = require('../models');
 const modelOptions = {
   user: {
     model: User,
@@ -13,7 +13,11 @@ const modelOptions = {
     required: false,
     attributes: { exclude: ['profile_id'] }
   },
-
+  profile: {
+    model: Profile,
+    as: 'profile',
+    required: false
+  },
   ingredients: {
     model: Ingredient,
     as: 'ingredients',
