@@ -14,15 +14,13 @@ module.exports = (sequelize, DataTypes) => {
       tableName: 'users'
     }
   );
-  User.associate = function(models) {
+  User.associate = function (models) {
     // associations can be defined here
-    const { Profile, ShoppingList, UserShoppingList } = models;
+    const { Profile, ShoppingList } = models;
     User.hasOne(Profile, { as: 'profile', foreignKey: 'user_id' });
-    User.belongsToMany(ShoppingList, {
+    User.hasMany(ShoppingList, {
       as: 'shopping_lists',
-      through: UserShoppingList,
-      foreignKey: 'user_id',
-      otherKey: 'shoppinglist_id'
+      foreignKey: 'user_id'
     });
   };
   return User;
