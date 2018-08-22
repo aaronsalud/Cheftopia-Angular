@@ -22,7 +22,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     const errors = {};
-    
+
 
     Profile.findOne({
       attributes: { exclude: ['user_id'] },
@@ -58,15 +58,14 @@ router.get('/user/:user_id', (req, res) => {
   })
     .then(profile => {
       if (!profile) {
-        errors.noprofile = 'There is no profile for this user';
-        return res.status(404).json(errors);
+        throw { noprofile: 'There is no profile for this user' };
       }
       res.json(profile);
     })
     .catch(err =>
       res
         .status(404)
-        .json({ error: 'There is no profile for this user', more_details: err })
+        .json(err)
     );
 });
 
@@ -92,7 +91,7 @@ router.get('/all', (req, res) => {
     .catch(err =>
       res
         .status(404)
-        .json({ error: 'There are no profiles', more_details: err })
+        .json({ error: 'There are no profiles' })
     );
 });
 
