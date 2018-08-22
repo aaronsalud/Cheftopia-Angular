@@ -5,6 +5,9 @@ const passport = require('passport');
 // Load Models
 const { User, ShoppingList, Ingredient } = require('../../models');
 
+// Load Model Options
+const modelOptions = require('../../helpers/model-options');
+
 //Load Input Validators
 const validateShoppingListInput = require('../../validators/shoppinglist');
 const validateIngredientsInput = require('../../validators/ingredient');
@@ -14,31 +17,18 @@ const validateIngredientsInput = require('../../validators/ingredient');
 // @params { archived: 1 | 0 }
 // @access Private
 router.get(
-  '/',
+  '/all',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     const isArchived =
       req.query.archived && req.query.archived == 1 ? true : false;
 
-    User.findOne({
-      where: {
-        id: req.user.id
-      },
+    User.findById(req.user.id, {
       include: [
         {
-          model: ShoppingList,
-          as: 'shopping_lists',
+          ...modelOptions.shoppinglist,
           where: { archived: isArchived },
-          through: { attributes: [] },
-          required: false,
-          include: [
-            {
-              model: Ingredient,
-              as: 'ingredients',
-              through: { attributes: [] },
-              required: false
-            }
-          ]
+          include: [modelOptions.ingredients]
         }
       ]
     })
@@ -261,27 +251,28 @@ router.post(
           }
         });
 
-        ShoppingList.findById(req.params.id).then(shoppingList => {
-
-          // Create new ingredient
-          Ingredient.create(newIngredient, { returning: true })
-            .then(createdIngredient => {
-              // Add recipe to pivot with profile
-              shoppingList
-                .addIngredient(createdIngredient.id)
-                .then(response => res.json(createdIngredient))
-                .catch(err => res.status(404).json(err));
-            })
-            .catch(err =>
-              res.status(404).json({ error: 'Failed to create new ingredient' })
-            );
-
-        }).catch(err => res.status(404).json(err));
+        ShoppingList.findById(req.params.id)
+          .then(shoppingList => {
+            // Create new ingredient
+            Ingredient.create(newIngredient, { returning: true })
+              .then(createdIngredient => {
+                // Add recipe to pivot with profile
+                shoppingList
+                  .addIngredient(createdIngredient.id)
+                  .then(response => res.json(createdIngredient))
+                  .catch(err => res.status(404).json(err));
+              })
+              .catch(err =>
+                res
+                  .status(404)
+                  .json({ error: 'Failed to create new ingredient' })
+              );
+          })
+          .catch(err => res.status(404).json(err));
       })
       .catch(err => res.status(404).json(err));
   }
 );
-
 
 // @route PUT api/shoppinglist/ingredients/:id
 // @desc Update an Ingredient by id
@@ -314,15 +305,18 @@ router.put(
         });
 
         // Update an ingredient
-        Ingredient.update(newIngredient, { where: { id: req.params.id }, returning: true })
+        Ingredient.update(newIngredient, {
+          where: { id: req.params.id },
+          returning: true
+        })
           .then(([rowsUpdated, [updatedIngedient]]) => {
             if (updatedIngedient) {
               res.json(updatedIngedient);
             } else {
-              throw { error: 'Ingredient not found' }
+              throw { error: 'Ingredient not found' };
             }
-
-          }).catch(err => res.status(404).json(err));
+          })
+          .catch(err => res.status(404).json(err));
       })
       .catch(err => res.status(404).json(err));
   }
@@ -345,26 +339,27 @@ router.delete(
 
     User.findById(req.user.id)
       .then(user => {
-        ShoppingList.findById(req.params.shoppinglist_id).then(shoppingList => {
-          // Delete ingredient
-          Ingredient.destroy({ returning: true, where: { id: req.params.ingredient_id } })
-            .then(deletedIngredient => {
-
-              if (deletedIngredient) {
-                //  Remove deleted ingredient id from the shoppinglist ingredient pivot table
-                shoppingList
-                  .removeIngredient(req.params.ingredient_id)
-                  .then(response => res.json({ success: true }))
-                  .catch(err => res.status(404).json(err));
-              }
-              else {
-                throw { error: 'Ingredient not found' }
-              }
+        ShoppingList.findById(req.params.shoppinglist_id)
+          .then(shoppingList => {
+            // Delete ingredient
+            Ingredient.destroy({
+              returning: true,
+              where: { id: req.params.ingredient_id }
             })
-            .catch(err =>
-              res.status(404).json(err)
-            );
-        }).catch(err => res.status(404).json(err));
+              .then(deletedIngredient => {
+                if (deletedIngredient) {
+                  //  Remove deleted ingredient id from the shoppinglist ingredient pivot table
+                  shoppingList
+                    .removeIngredient(req.params.ingredient_id)
+                    .then(response => res.json({ success: true }))
+                    .catch(err => res.status(404).json(err));
+                } else {
+                  throw { error: 'Ingredient not found' };
+                }
+              })
+              .catch(err => res.status(404).json(err));
+          })
+          .catch(err => res.status(404).json(err));
       })
       .catch(err => res.status(404).json(err));
   }
