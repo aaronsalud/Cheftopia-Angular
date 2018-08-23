@@ -80,7 +80,15 @@ router.get('/all', (req, res) => {
     include: [
       {
         ...modelOptions.user,
-        include: [loadRecipesWithIngredients]
+        include: [
+          {
+            ...modelOptions.recipes,
+            where: { is_public: true },
+            include: [
+              { ...modelOptions.ingredients }
+            ]
+          }
+        ]
       }
     ]
   })
