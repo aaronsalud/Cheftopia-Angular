@@ -8,7 +8,6 @@ const { Profile, User, Recipe, Ingredient } = require('../../models');
 
 // Load model loading options
 const modelOptions = require('../../helpers/model-options');
-const loadRecipesWithIngredients = { ...modelOptions.recipes, include: [modelOptions.ingredients] };
 
 //Load Input Validators
 const validateRecipeInput = require('../../validators/recipe');
@@ -20,17 +19,12 @@ router.get(
     '/',
     passport.authenticate('jwt', { session: false }),
     (req, res) => {
-        Profile.findOne({
+        Recipe.findAll({
             where: { user_id: req.user.id },
-            include: [
-                loadRecipesWithIngredients
-            ]
+            include: [modelOptions.ingredients]
         })
-            .then(profile => {
-                if (!profile) {
-                    throw { noprofile: 'There is no such profile which links to recipes' }
-                }
-                res.json(profile.recipes);
+            .then(recipes => {
+                res.json(recipes);
             })
             .catch(err => res.status(404).json(err));
     }
@@ -51,156 +45,45 @@ router.post(
             return res.status(400).json(errors);
         }
 
-        Profile.findOne({
-            where: { user_id: req.user.id }
-        })
-            .then(profile => {
-                const fields = ['name', 'image', 'description', 'ingredients'];
-                let newRecipe = {};
+        const fields = ['name', 'image', 'description', 'ingredients'];
+        let newRecipe = { user_id: req.user.id };
 
-                fields.forEach(field => {
-                    if (req && req.body && req.body[field]) {
-                        newRecipe[field] = req.body[field];
-                    }
-                });
+        fields.forEach(field => {
+            if (req && req.body && req.body[field]) {
+                newRecipe[field] = req.body[field];
+            }
+        });
 
-                profile
-                    .createRecipe(newRecipe, { returning: true })
-                    .then(createdRecipe => {
-                        // If ingredients array exist, do a bulk create
+        Recipe
+            .create(newRecipe, { returning: true })
+            .then(createdRecipe => {
+                // If ingredients array exist, do a bulk create
+                if (newRecipe.ingredients) {
+                    Ingredient.bulkCreate(newRecipe.ingredients, { returning: true }).then(createdIngredients => {
+                        return createdIngredients;
+                    }).then(createdIngredients => {
                         const promises = [];
-                        if (newRecipe.ingredients) {
-                            // Ingredient.bulkCreate(newRecipe.ingredients, { returning: true }).then(ingredients => {
-                            const promises = [];
-                            newRecipe.ingredients.forEach(ingredient => {
-                                const promise = createdRecipe.createIngredient(ingredient, { returning: true });
-                                promises.push(promise);
-                            });
-                            Promise.all(promises).then(response => {
-                                Recipe.findById(createdRecipe.id, { include: [modelOptions.ingredients] }).then(recipe => res.json(recipe));
-                            });
-                            // });
-
-                        } else {
-                            // Return the newly created recipe without the ingredients
+                        createdIngredients.forEach(ingredient => {
+                            const promise = createdRecipe.addIngredient(ingredient, { returning: true });
+                            promises.push(promise);
+                        });
+                        Promise.all(promises).then(response => {
                             Recipe.findById(createdRecipe.id, { include: [modelOptions.ingredients] }).then(recipe => res.json(recipe));
-                        }
-                    })
-                    .catch(err =>
-                        res.status(404).json({ error: 'Failed to create new recipe' })
-                    );
-            })
-            .catch(err =>
-                res.status(401).json({ error: 'User have not set up a profile yet' })
-            );
-    }
-);
-
-// @route DELETE api/profile/
-// @desc  Delete user and profile
-// @access Private
-router.delete(
-    '/',
-    passport.authenticate('jwt', { session: false }),
-    (req, res) => {
-        Profile.destroy({ returning: true, where: { user_id: req.user.id } })
-            .then(profile => {
-                if (profile) {
-                    User.destroy({
-                        returning: true,
-                        where: { id: profile.user_id }
-                    })
-                        .then(() => res.json({ success: true }))
-                        .catch(err => res.status(404).json(err));
-                } else {
-                    res.status(404).json({
-                        error: 'No profiles to delete for this user'
+                        });
                     });
+                } else {
+                    // Return the newly created recipe without the ingredients
+                    Recipe.findById(createdRecipe.id, { include: [modelOptions.ingredients] }).then(recipe => res.json(recipe));
                 }
             })
             .catch(err =>
-                res.status(404).json({
-                    error: 'Profile not found',
-                    more_details: err
-                })
+                res.status(404).json({ error: 'Failed to create new recipe' })
             );
     }
 );
 
-// @route POST api/profile/recipe
-// @desc  Add recipe to profile
-// @access Private
-router.post(
-    '/recipe',
-    passport.authenticate('jwt', { session: false }),
-    (req, res) => {
-        const { errors, isValid } = validateRecipeInput(req.body);
-
-        // Check Validation
-        if (!isValid) {
-            // Return any errors with 400 status
-            return res.status(400).json(errors);
-        }
-
-        Profile.findOne({
-            where: { user_id: req.user.id }
-        })
-            .then(profile => {
-                const fields = ['name', 'image', 'description', 'ingredients'];
-                let newRecipe = {};
-
-                fields.forEach(field => {
-                    if (req && req.body && req.body[field]) {
-                        newRecipe[field] = req.body[field];
-                    }
-                });
-
-                profile
-                    .createRecipe(newRecipe, { returning: true })
-                    .then(createdRecipe => {
-                        // If ingredients array exist, do a bulk create
-                        if (newRecipe.ingredients) {
-                            Ingredient.bulkCreate(newRecipe.ingredients, {
-                                returning: true
-                            }).then(createdIngredients => {
-                                // Get newly created ingredient Ids
-                                const newIngredientIds = getValuesByKey(
-                                    createdIngredients,
-                                    'id'
-                                );
-                                // Set Ids to map recipe_ingredient pivot table
-                                createdRecipe.setIngredients(newIngredientIds).then(data => {
-                                    // Return newly created recipe with ingredients
-                                    Recipe.findById(createdRecipe.id, {
-                                        include: [
-                                            {
-                                                model: Ingredient,
-                                                as: 'ingredients',
-                                                through: {
-                                                    attributes: []
-                                                }
-                                            }
-                                        ]
-                                    }).then(recipe => res.json(recipe));
-                                });
-                            });
-                        } else {
-                            // Return the newly created recipe without the ingredients
-                            res.json(createdRecipe);
-                        }
-                    })
-                    .catch(err =>
-                        res.status(404).json({ error: 'Failed to create new recipe' })
-                    );
-            })
-            .catch(err =>
-                res.status(401).json({ error: 'User have not set up a profile yet' })
-            );
-    }
-);
-
-// @route PUT api/profile/recipe/:id
-// @desc  Update a recipe from a profile
+// @route PUT api/recipe/:id
+// @desc  Update a recipe
 // @access Private
 router.put(
     '/recipe/:id',
