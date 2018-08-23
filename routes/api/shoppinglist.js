@@ -12,31 +12,25 @@ const modelOptions = require('../../helpers/model-options');
 const validateShoppingListInput = require('../../validators/shoppinglist');
 const validateIngredientsInput = require('../../validators/ingredient');
 
-// @route GET api/shoppinglist/all
-// @desc Get Current User shopping list
+// @route GET api/shoppinglist
+// @desc Get Current User shopping lists
 // @params { archived: 1 | 0 }
 // @access Private
 router.get(
-  '/all',
+  '/',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     const isArchived =
       req.query.archived && req.query.archived == 1 ? true : false;
 
-    User.findById(req.user.id, {
+    ShoppingList.findAll({
+      where: { archived: isArchived, user_id: req.user.id },
       include: [
-        {
-          ...modelOptions.shoppinglist,
-          where: { archived: isArchived },
-          include: [modelOptions.ingredients]
-        }
+        modelOptions.ingredients
       ]
     })
-      .then(user => {
-        if (!user) {
-          throw { error: 'User not found' };
-        }
-        res.json(user.shopping_lists);
+      .then(shopping_lists => {
+        res.json(shopping_lists);
       })
       .catch(err => res.status(404).json(err));
   }
@@ -57,11 +51,7 @@ router.post(
       return res.status(400).json(errors);
     }
 
-    User.findOne({
-      where: {
-        id: req.user.id
-      }
-    })
+    User.findById(req.user.id)
       .then(user => {
         const fields = ['name', 'description'];
         let newShoppingList = {};
@@ -73,16 +63,12 @@ router.post(
         });
 
         // Create new shopping list
-        ShoppingList.create(newShoppingList)
+        user.createShopping_list(newShoppingList)
           .then(createdShoppingList => {
-            // Add shoppinglist to pivot with user
-            user
-              .addShopping_list(createdShoppingList.id)
-              .then(response => res.json(createdShoppingList))
-              .catch(err => res.status(404).json(err));
+            res.json(createdShoppingList)
           })
           .catch(err =>
-            res.status(404).json({ error: 'Failed to create new recipe' })
+            res.status(404).json({ error: 'Failed to create new shoping list' })
           );
       })
       .catch(err => res.status(404).json(err));
