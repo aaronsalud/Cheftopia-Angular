@@ -27,7 +27,7 @@ router.get(
       include: [
         {
           ...modelOptions.user,
-          include: [ loadRecipesWithIngredients]
+          include: [loadRecipesWithIngredients]
         }
       ]
     })
@@ -51,7 +51,10 @@ router.get('/user/:user_id', (req, res) => {
     attributes: { exclude: ['user_id'] },
     where: { user_id: req.params.user_id },
     include: [
-      modelOptions.user
+      {
+        ...modelOptions.user,
+        include: [loadRecipesWithIngredients]
+      }
     ]
   })
     .then(profile => {
@@ -75,7 +78,10 @@ router.get('/all', (req, res) => {
   Profile.findAll({
     attributes: { exclude: ['user_id'] },
     include: [
-      modelOptions.user
+      {
+        ...modelOptions.user,
+        include: [loadRecipesWithIngredients]
+      }
     ]
   })
     .then(profiles => {
