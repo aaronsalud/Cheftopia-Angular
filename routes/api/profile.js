@@ -2,9 +2,8 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 
-const getValuesByKey = require('../../helpers/get-values-by-key');
 // Load Models
-const { Profile, User, Recipe, Ingredient } = require('../../models');
+const { Profile, User } = require('../../models');
 
 // Load model loading options
 const modelOptions = require('../../helpers/model-options');
@@ -12,7 +11,6 @@ const loadRecipesWithIngredients = { ...modelOptions.recipes, include: [modelOpt
 
 //Load Input Validators
 const validateProfileInput = require('../../validators/profile');
-const validateRecipeInput = require('../../validators/recipe');
 
 // @route GET api/profile
 // @desc Get Current User profile
@@ -23,13 +21,14 @@ router.get(
   (req, res) => {
     const errors = {};
 
-
     Profile.findOne({
       attributes: { exclude: ['user_id'] },
       where: { user_id: req.user.id },
       include: [
-        modelOptions.user,
-        loadRecipesWithIngredients
+        {
+          ...modelOptions.user,
+          include: [ loadRecipesWithIngredients]
+        }
       ]
     })
       .then(profile => {
@@ -52,11 +51,7 @@ router.get('/user/:user_id', (req, res) => {
     attributes: { exclude: ['user_id'] },
     where: { user_id: req.params.user_id },
     include: [
-      modelOptions.user,
-      {
-        ...loadRecipesWithIngredients,
-        where: { is_public: true }
-      }
+      modelOptions.user
     ]
   })
     .then(profile => {
@@ -80,11 +75,7 @@ router.get('/all', (req, res) => {
   Profile.findAll({
     attributes: { exclude: ['user_id'] },
     include: [
-      modelOptions.user,
-      {
-        ...loadRecipesWithIngredients,
-        where: { is_public: true }
-      }
+      modelOptions.user
     ]
   })
     .then(profiles => {
@@ -146,7 +137,7 @@ router.post(
   }
 );
 
-// @route DELETE api/profile/
+// @route DELETE api/profile
 // @desc  Delete user and profile
 // @access Private
 router.delete(
@@ -177,101 +168,5 @@ router.delete(
   }
 );
 
-// @route PUT api/profile/recipe/:id
-// @desc  Update a recipe from a profile
-// @access Private
-router.put(
-  '/recipe/:id',
-  passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    const { errors, isValid } = validateRecipeInput(req.body);
-
-    // Check Validation
-    if (!isValid) {
-      // Return any errors with 400 status
-      return res.status(400).json(errors);
-    }
-
-    // Ensure that the only the user currently logged in can edit the recipe
-    Profile.findOne({
-      where: { user_id: req.user.id }
-    })
-      .then(profile => {
-        const fields = ['name', 'image', 'description', 'ingredients'];
-        let newRecipe = {};
-
-        fields.forEach(field => {
-          if (req && req.body && req.body[field]) {
-            newRecipe[field] = req.body[field];
-          }
-        });
-
-        // Update recipe
-        Recipe.update(newRecipe, {
-          returning: true,
-          where: { id: req.params.id }
-        })
-          .then(([rowsUpdated, [updatedRecipe]]) => {
-            if (updatedRecipe) {
-              res.json(updatedRecipe);
-            } else {
-              throw { error: 'Recipe not found' };
-            }
-          })
-          .catch(err => res.status(404).json(err));
-      })
-      .catch(err =>
-        res
-          .status(401)
-          .json({ error: 'User is unauthorized to perform this action' })
-      );
-  }
-);
-
-// @route DELETE api/profile/recipe/:id
-// @desc  Delete a recipe from a profile
-// @access Private
-router.delete(
-  '/recipe/:id',
-  passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    const { errors, isValid } = validateRecipeInput(req.body);
-
-    // Check Validation
-    if (!isValid) {
-      // Return any errors with 400 status
-      return res.status(400).json(errors);
-    }
-
-    // Ensure that the only the user currently logged in can edit the recipe
-    Profile.findOne({
-      where: { user_id: req.user.id }
-    })
-      .then(profile => {
-        // Delete the recipe
-        Recipe.destroy({
-          returning: true,
-          where: { id: req.params.id }
-        })
-          .then(deletedRecipe => {
-            if (deletedRecipe) {
-              // Remove deleted recipe id from the profile recipe pivot table
-              profile
-                .removeRecipe(req.params.id)
-                .then(() => res.json({ success: true }))
-                .catch(err => res.status(404).json(err));
-            } else {
-              throw { error: 'Recipe item not found' };
-            }
-          })
-          .catch(err => res.status(404).json(err));
-      })
-      .catch(err =>
-        res
-          .status(401)
-          .json({ error: 'User is unauthorized to perform this action' })
-      );
-  }
-);
 
 module.exports = router;
