@@ -14,9 +14,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
   Recipe.associate = function (models) {
-    const { Profile, Ingredient } = models;
-    Recipe.belongsTo(Profile, {
-      as: 'profile'
+    const { User, Ingredient } = models;
+    Recipe.belongsTo(User, {
+      as: 'user'
     });
 
     Recipe.hasMany(Ingredient, {
