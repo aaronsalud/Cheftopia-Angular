@@ -26,7 +26,7 @@ router.get(
     ShoppingList.findAll({
       where: { archived: isArchived, user_id: req.user.id },
       include: [
-        modelOptions.ingredients
+        { ...modelOptions.ingredients, order: [['updated_at', 'DESC']] }
       ]
     })
       .then(shopping_lists => {
@@ -193,11 +193,11 @@ router.post(
   }
 );
 
-// @route PUT api/shoppinglist/ingredients/:id
+// @route PUT api/shoppinglist/:id/ingredient/:ingredient_id
 // @desc Update an Ingredient by id
 // @access Private
 router.put(
-  '/ingredients/:id',
+  '/:id/ingredient/:ingredient_id',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     const { errors, isValid } = validateIngredientsInput(req.body);
@@ -208,36 +208,33 @@ router.put(
       return res.status(400).json(errors);
     }
 
-    User.findOne({
-      where: {
-        id: req.user.id
+    const fields = ['name', 'amount'];
+    let newIngredient = {};
+
+    fields.forEach(field => {
+      if (req && req.body && req.body[field]) {
+        newIngredient[field] = req.body[field];
       }
+    });
+
+    // Update an ingredient
+    Ingredient.update(newIngredient, {
+      where: { id: req.params.ingredient_id },
+      include: [
+        {
+          ...modelOptions.shoppinglist,
+          where: { id: req.params.id, user_id: req.user.id }
+        }
+      ],
+      returning: true
     })
-      .then(user => {
-        const fields = ['name', 'amount'];
-        let newIngredient = {};
-
-        fields.forEach(field => {
-          if (req && req.body && req.body[field]) {
-            newIngredient[field] = req.body[field];
-          }
-        });
-
-        // Update an ingredient
-        Ingredient.update(newIngredient, {
-          where: { id: req.params.id },
-          returning: true
-        })
-          .then(([rowsUpdated, [updatedIngedient]]) => {
-            if (updatedIngedient) {
-              res.json(updatedIngedient);
-            } else {
-              throw { error: 'Ingredient not found' };
-            }
-          })
-          .catch(err => res.status(404).json(err));
+      .then(([rowsUpdated, [updatedIngedient]]) => {
+        return updatedIngedient
       })
-      .catch(err => res.status(404).json(err));
+      .then(updatedIngredient => {
+        ShoppingList.findById(updatedIngredient.id, { include: [modelOptions.ingredients], order: [['updated_at', 'DESC']] }).then(shoppinglist => res.json(shoppinglist));
+      })
+      .catch(err => res.status(404).json({ error: 'Ingredient not found' }));
   }
 );
 
