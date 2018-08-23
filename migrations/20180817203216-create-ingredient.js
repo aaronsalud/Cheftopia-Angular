@@ -17,11 +17,9 @@ module.exports = {
         allowNull: false,
       },
       ingredientable: {
-        allowNull: false,
         type: Sequelize.STRING
       },
       ingredientable_id: {
-        allowNull: false,
         type: Sequelize.INTEGER
       },
       created_at: {
