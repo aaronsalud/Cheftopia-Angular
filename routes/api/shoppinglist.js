@@ -90,34 +90,26 @@ router.put(
       return res.status(400).json(errors);
     }
 
-    User.findOne({
-      where: {
-        id: req.user.id
+    const fields = ['name', 'description', 'archived'];
+    let newShoppingList = {};
+
+    fields.forEach(field => {
+      if (req && req.body && req.body[field]) {
+        newShoppingList[field] = req.body[field];
       }
+    });
+
+    // Update shopping list
+    ShoppingList.update(newShoppingList, {
+      returning: true,
+      where: { id: req.params.id, user_id: req.user.id }
     })
-      .then(user => {
-        const fields = ['name', 'description', 'archived'];
-        let newShoppingList = {};
-
-        fields.forEach(field => {
-          if (req && req.body && req.body[field]) {
-            newShoppingList[field] = req.body[field];
-          }
-        });
-
-        // Update shopping list
-        ShoppingList.update(newShoppingList, {
-          returning: true,
-          where: { id: req.params.id }
-        })
-          .then(([rowsUpdated, [updatedShoppingList]]) => {
-            res.json(updatedShoppingList);
-          })
-          .catch(err =>
-            res.status(404).json({ error: 'Failed to update shopping list' })
-          );
+      .then(([rowsUpdated, [updatedShoppingList]]) => {
+        res.json(updatedShoppingList);
       })
-      .catch(err => res.status(404).json(err));
+      .catch(err =>
+        res.status(404).json({ error: 'Failed to update shopping list' })
+      );
   }
 );
 
