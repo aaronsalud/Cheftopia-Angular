@@ -157,11 +157,11 @@ router.delete(
   }
 );
 
-// @route POST api/shoppinglist/:id/ingredients
+// @route POST api/shoppinglist/:id/ingredient
 // @desc Create an ingredient for a shopping list
 // @access Private
 router.post(
-  '/:id/ingredients',
+  '/:id/ingredient',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     const { errors, isValid } = validateIngredientsInput(req.body);
@@ -172,41 +172,24 @@ router.post(
       return res.status(400).json(errors);
     }
 
-    User.findOne({
-      where: {
-        id: req.user.id
+    const fields = ['name', 'amount'];
+    let newIngredient = {};
+
+    fields.forEach(field => {
+      if (req && req.body && req.body[field]) {
+        newIngredient[field] = req.body[field];
       }
-    })
-      .then(user => {
-        const fields = ['name', 'amount'];
-        let newIngredient = {};
+    });
 
-        fields.forEach(field => {
-          if (req && req.body && req.body[field]) {
-            newIngredient[field] = req.body[field];
-          }
-        });
-
-        ShoppingList.findById(req.params.id)
-          .then(shoppingList => {
-            // Create new ingredient
-            Ingredient.create(newIngredient, { returning: true })
-              .then(createdIngredient => {
-                // Add recipe to pivot with profile
-                shoppingList
-                  .addIngredient(createdIngredient.id)
-                  .then(response => res.json(createdIngredient))
-                  .catch(err => res.status(404).json(err));
-              })
-              .catch(err =>
-                res
-                  .status(404)
-                  .json({ error: 'Failed to create new ingredient' })
-              );
-          })
-          .catch(err => res.status(404).json(err));
+    ShoppingList.findById(req.params.id, { where: { user_id: req.user.id } })
+      .then(shoppingList => {
+        // Create new ingredient
+        return shoppingList.createIngredient(newIngredient, { returning: true });
+      }).then(response => {
+        // Post Ingredient Creation
+        ShoppingList.findById(req.params.id, { include: [modelOptions.ingredients] }).then(shoppinglist => res.json(shoppinglist));
       })
-      .catch(err => res.status(404).json(err));
+      .catch(err => res.status(404).json({ error: 'Failed to create ingredient' }));
   }
 );
 
