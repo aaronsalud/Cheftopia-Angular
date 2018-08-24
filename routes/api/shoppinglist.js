@@ -232,52 +232,57 @@ router.put(
         return updatedIngedient
       })
       .then(updatedIngredient => {
-        ShoppingList.findById(updatedIngredient.id, { include: [modelOptions.ingredients], order: [['updated_at', 'DESC']] }).then(shoppinglist => res.json(shoppinglist));
+        ShoppingList.findById(updatedIngredient.id, { include: [modelOptions.ingredients] }).then(shoppinglist => res.json(shoppinglist));
       })
       .catch(err => res.status(404).json({ error: 'Ingredient not found' }));
   }
 );
 
-// @route DELETE api/shoppinglist/:shoppinglist_id/ingredients/:ingredient_id
+// @route DELETE api/shoppinglist/:id/ingredient/:ingredient_id
 // @desc Delete an ingredient for a shopping list
 // @access Private
 router.delete(
-  '/:shoppinglist_id/ingredients/:ingredient_id',
+  '/:id/ingredient/:ingredient_id',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    const { errors, isValid } = validateIngredientsInput(req.body);
 
-    // Check Validation
-    if (!isValid) {
-      // Return any errors with 400 status
-      return res.status(400).json(errors);
-    }
-
-    User.findById(req.user.id)
-      .then(user => {
-        ShoppingList.findById(req.params.shoppinglist_id)
-          .then(shoppingList => {
-            // Delete ingredient
-            Ingredient.destroy({
-              returning: true,
-              where: { id: req.params.ingredient_id }
-            })
-              .then(deletedIngredient => {
-                if (deletedIngredient) {
-                  //  Remove deleted ingredient id from the shoppinglist ingredient pivot table
-                  shoppingList
-                    .removeIngredient(req.params.ingredient_id)
-                    .then(response => res.json({ success: true }))
-                    .catch(err => res.status(404).json(err));
-                } else {
-                  throw { error: 'Ingredient not found' };
-                }
-              })
-              .catch(err => res.status(404).json(err));
-          })
-          .catch(err => res.status(404).json(err));
+    ShoppingList.findById(req.params.id, { where: { user_id: req.user.id }, include: [{ ...modelOptions.ingredients, where: { id: req.params.ingredient_id } }] })
+      .then(shoppinglist => {
+        // Delete the ingredient
+        shoppinglist.ingredients[0].destroy().then(ingredient => {
+          res.json({ success: true });
+        });
       })
-      .catch(err => res.status(404).json(err));
+      .catch(err => res.status(404).json({ error: 'Failed to remove Ingredient from shopping list' }));
+
+
+
+
+    // User.findById(req.user.id)
+    //   .then(user => {
+    //     ShoppingList.findById(req.params.shoppinglist_id)
+    //       .then(shoppingList => {
+    //         // Delete ingredient
+    //         Ingredient.destroy({
+    //           returning: true,
+    //           where: { id: req.params.ingredient_id }
+    //         })
+    //           .then(deletedIngredient => {
+    //             if (deletedIngredient) {
+    //               //  Remove deleted ingredient id from the shoppinglist ingredient pivot table
+    //               shoppingList
+    //                 .removeIngredient(req.params.ingredient_id)
+    //                 .then(response => res.json({ success: true }))
+    //                 .catch(err => res.status(404).json(err));
+    //             } else {
+    //               throw { error: 'Ingredient not found' };
+    //             }
+    //           })
+    //           .catch(err => res.status(404).json(err));
+    //       })
+    //       .catch(err => res.status(404).json(err));
+    //   })
+    //   .catch(err => res.status(404).json(err));
   }
 );
 
