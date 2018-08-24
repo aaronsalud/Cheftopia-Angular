@@ -120,40 +120,18 @@ router.delete(
   '/:id',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    const { errors, isValid } = validateShoppingListInput(req.body);
-    // Check Validation
-    if (!isValid) {
-      // Return any errors with 400 status
-      return res.status(400).json(errors);
-    }
-    // Ensure that the only the user currently logged in can edit the shopping list
-    User.findOne({
-      where: { id: req.user.id }
-    })
-      .then(user => {
-        // Delete the shopping list
-        ShoppingList.destroy({
-          returning: true,
-          where: { id: req.params.id }
-        })
-          .then(deletedShoppingList => {
-            if (deletedShoppingList) {
-              // Remove deleted shopping list id from the profile recipe pivot table
-              user
-                .removeShopping_list(req.params.id)
-                .then(() => res.json({ success: true }))
-                .catch(err => res.status(404).json(err));
-            } else {
-              throw { error: 'Shopping List item not found' };
-            }
-          })
-          .catch(err => res.status(404).json(err));
-      })
-      .catch(err =>
-        res
-          .status(401)
-          .json({ error: 'User is unauthorized to perform this action' })
-      );
+
+    ShoppingList.findById(req.params.id, { where: { user_id: req.user.id } })
+      .then(shoppinglist => {
+        // Delete associated Ingredients
+        Ingredient.destroy({ where: { ingredientable_id: req.params.id } })
+          .then(response => { return response; })
+          .then(response => {
+            // Delete the shopping list
+            shoppinglist.destroy()
+              .then(response => res.json({ success: true }));
+          });
+      }).catch(err => res.status(404).json({ error: 'Shopping List not found ' }))
   }
 );
 
@@ -254,35 +232,6 @@ router.delete(
         });
       })
       .catch(err => res.status(404).json({ error: 'Failed to remove Ingredient from shopping list' }));
-
-
-
-
-    // User.findById(req.user.id)
-    //   .then(user => {
-    //     ShoppingList.findById(req.params.shoppinglist_id)
-    //       .then(shoppingList => {
-    //         // Delete ingredient
-    //         Ingredient.destroy({
-    //           returning: true,
-    //           where: { id: req.params.ingredient_id }
-    //         })
-    //           .then(deletedIngredient => {
-    //             if (deletedIngredient) {
-    //               //  Remove deleted ingredient id from the shoppinglist ingredient pivot table
-    //               shoppingList
-    //                 .removeIngredient(req.params.ingredient_id)
-    //                 .then(response => res.json({ success: true }))
-    //                 .catch(err => res.status(404).json(err));
-    //             } else {
-    //               throw { error: 'Ingredient not found' };
-    //             }
-    //           })
-    //           .catch(err => res.status(404).json(err));
-    //       })
-    //       .catch(err => res.status(404).json(err));
-    //   })
-    //   .catch(err => res.status(404).json(err));
   }
 );
 
