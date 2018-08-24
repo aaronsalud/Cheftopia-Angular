@@ -58,18 +58,19 @@ router.post(
             .create(newRecipe, { returning: true })
             .then(createdRecipe => {
                 // If ingredients array exist, do a bulk create
+                const newIngredients = newRecipe.ingredients.slice();
+
+                newIngredients.map(ingredient => {
+                    ingredient.ingredientable_id = createdRecipe.id;
+                    ingredient.ingredientable = 'Recipe'
+                });
+
                 if (newRecipe.ingredients) {
-                    Ingredient.bulkCreate(newRecipe.ingredients, { returning: true }).then(createdIngredients => {
+                    Ingredient.bulkCreate(newIngredients, { returning: true }).then(createdIngredients => {
                         return createdIngredients;
-                    }).then(createdIngredients => {
-                        const promises = [];
-                        createdIngredients.forEach(ingredient => {
-                            const promise = createdRecipe.addIngredient(ingredient, { returning: true });
-                            promises.push(promise);
-                        });
-                        Promise.all(promises).then(response => {
-                            Recipe.findById(createdRecipe.id, { include: [modelOptions.ingredients] }).then(recipe => res.json(recipe));
-                        });
+                    }).then(response => {
+                        // Return the newly created recipe with the ingredients
+                        Recipe.findById(createdRecipe.id, { include: [modelOptions.ingredients] }).then(recipe => res.json(recipe));
                     });
                 } else {
                     // Return the newly created recipe without the ingredients
