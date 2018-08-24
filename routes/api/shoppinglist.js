@@ -124,7 +124,7 @@ router.delete(
     ShoppingList.findById(req.params.id, { where: { user_id: req.user.id } })
       .then(shoppinglist => {
         // Delete associated Ingredients
-        Ingredient.destroy({ where: { ingredientable_id: req.params.id } })
+        Ingredient.destroy({ where: { ingredientable_id: req.params.id , ingredientable: 'ShoppingList'} })
           .then(response => { return response; })
           .then(response => {
             // Delete the shopping list
@@ -197,7 +197,7 @@ router.put(
 
     // Update an ingredient
     Ingredient.update(newIngredient, {
-      where: { id: req.params.ingredient_id },
+      where: { id: req.params.ingredient_id, ingredientable: 'ShoppingList' },
       include: [
         {
           ...modelOptions.shoppinglist,
@@ -224,7 +224,7 @@ router.delete(
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
 
-    ShoppingList.findById(req.params.id, { where: { user_id: req.user.id }, include: [{ ...modelOptions.ingredients, where: { id: req.params.ingredient_id } }] })
+    ShoppingList.findById(req.params.id, { where: { user_id: req.user.id }, include: [{ ...modelOptions.ingredients, where: { id: req.params.ingredient_id, ingredietable: 'ShoppingList' } }] })
       .then(shoppinglist => {
         // Delete the ingredient
         shoppinglist.ingredients[0].destroy().then(ingredient => {
