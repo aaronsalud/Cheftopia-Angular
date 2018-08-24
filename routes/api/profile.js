@@ -123,7 +123,6 @@ router.post(
 
     // Get fields
     const profileFields = {};
-    profileFields.user = req.user.id;
 
     const fields = ['restaurant', 'location', 'bio', 'occupation', 'website'];
 
