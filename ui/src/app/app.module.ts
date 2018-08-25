@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './routes/app-routing.module';
 import { AppComponent } from './app.component';
@@ -15,6 +16,10 @@ import { ShoppingListComponent } from './components/shopping-list/shopping-list.
 import { ShoppingEditComponent } from './components/shopping-list/shopping-edit/shopping-edit.component';
 import { ShoppingListService } from './components/shopping-list/shopping-list.service';
 import { RecipeService } from './components/recipes/recipe.service';
+import { LoginComponent } from './components/auth/login/login.component';
+import { SignupComponent } from './components/auth/signup/signup.component';
+import { LandingComponent } from './components/landing/landing.component';
+import { LayoutComponent } from './components/layout/layout.component';
 
 @NgModule({
   declarations: [
@@ -26,11 +31,16 @@ import { RecipeService } from './components/recipes/recipe.service';
     RecipeItemComponent,
     RecipeFormComponent,
     ShoppingListComponent,
-    ShoppingEditComponent
+    ShoppingEditComponent,
+    LoginComponent,
+    SignupComponent,
+    LandingComponent,
+    LayoutComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
+    HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
     NgbModule.forRoot()
