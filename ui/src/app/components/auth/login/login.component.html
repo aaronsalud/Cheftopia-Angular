@@ -1,0 +1,29 @@
+<app-layout>
+  <div class="login">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-7 m-auto card py-4">
+          <h1 class="display-4 text-center">Log In</h1>
+          <p class="lead text-center">
+            Sign in to your Cheftopia account
+          </p>
+          <form (ngSubmit)="saveItem(form)" #form="ngForm">
+            <div class="form-group">
+              <!-- <div class="col-5"> -->
+              <label for="email">Email</label>
+              <input type="text" id="email" name="email" ngModel class="form-control" required>
+              <!-- </div> -->
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" id="amount" name="password" ngModel class="form-control" required>
+            </div>
+            <div class="form-group">
+              <button class="btn btn-success btn-block" type="submit" [disabled]="!form.valid">Log in</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-layout>
