@@ -1,8 +1,10 @@
-<div class="row my-3">
-  <div class="col-lg-5">
-    <app-recipe-list></app-recipe-list>
+<app-layout>
+  <div class="row my-3">
+    <div class="col-lg-5">
+      <app-recipe-list></app-recipe-list>
+    </div>
+    <div class="col-lg-7">
+      <router-outlet></router-outlet>
+    </div>
   </div>
-  <div class="col-lg-7">
-    <router-outlet></router-outlet>
-  </div>
-</div>
+</app-layout>
