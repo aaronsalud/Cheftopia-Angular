@@ -6,7 +6,7 @@ import { RecipeFormComponent } from '../components/recipes/recipe-form/recipe-fo
 import { LandingComponent } from '../components/landing/landing.component';
 import { LoginComponent } from '../components/auth/login/login.component';
 import { SignupComponent } from '../components/auth/signup/signup.component';
-import { AuthGuard } from '../components/auth/guards/auth.guard';
+import { AccessGuard } from '../components/auth/guards/access.guard';
 export const appRoutes: Routes = [
   {
     path: 'recipes',
@@ -17,31 +17,34 @@ export const appRoutes: Routes = [
       { path: ':id', component: RecipeDetailComponent },
       { path: ':id/edit', component: RecipeFormComponent }
     ],
-    canActivate: [AuthGuard]
+    canActivate: [AccessGuard]
   },
   {
     path: 'shopping-list',
     pathMatch: 'full',
     component: ShoppingListComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AccessGuard]
   },
   {
     path: 'login',
     pathMatch: 'full',
-    component: LoginComponent
-    // canActivate: [!AuthGuard]
+    component: LoginComponent,
+    canActivate: [AccessGuard],
+    data: { isPublicOnly: true }
   },
   {
     path: 'register',
     pathMatch: 'full',
-    component: SignupComponent
-    // canActivate: [!AuthGuard]
+    component: SignupComponent,
+    canActivate: [AccessGuard],
+    data: { isPublicOnly: true }
   },
   {
     path: '',
     pathMatch: 'full',
-    component: LandingComponent
-    // canActivate: [!AuthGuard]
+    component: LandingComponent,
+    canActivate: [AccessGuard],
+    data: { isPublicOnly: true }
   }
   // {
   //   path: '',
