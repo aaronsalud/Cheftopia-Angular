@@ -10,11 +10,15 @@
           <form (ngSubmit)="login(form)" #form="ngForm">
             <div class="form-group">
               <label for="email">Email</label>
-              <input type="text" id="email" name="email" ngModel class="form-control" required>
+              <input type="text" id="email" name="email" ngModel class="form-control" [ngClass]="{'is-invalid':( errors && errors.email)}"
+                required>
+              <div *ngIf="errors && errors.email" class="invalid-feedback">{{errors.email}}</div>
             </div>
             <div class="form-group">
               <label for="password">Password</label>
-              <input type="password" id="password" name="password" ngModel class="form-control" required>
+              <input type="password" id="password" name="password" ngModel class="form-control" [ngClass]="{'is-invalid': (errors && errors.password)}"
+                required>
+              <div *ngIf="errors && errors.password" class="invalid-feedback">{{errors.password}}</div>
             </div>
             <div class="form-group">
               <button class="btn btn-success btn-block" type="submit" [disabled]="!form.valid">Log in</button>
