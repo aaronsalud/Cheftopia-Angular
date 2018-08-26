@@ -3,30 +3,51 @@ import { Ingredient } from '../shared/ingredient.model';
 import { ShoppingListService } from '../shopping-list/shopping-list.service';
 import { Recipe } from './recipe.model';
 import { Subject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class RecipeService {
   recipesUpdated = new Subject<Recipe[]>();
-  constructor(private shoppingListService: ShoppingListService) {}
+  constructor(
+    private shoppingListService: ShoppingListService,
+    private http: HttpClient
+  ) {}
 
-  private recipes: Recipe[] = [
-    new Recipe(
-      'Chicken Inasal',
-      'This is the recipe',
-      'https://images.summitmedia-digital.com/yummyph/images/04-2013_recipes/04-2013_yummy-ph_recipe_image_sari-jorges-chicken-inasal_main.jpg',
-      [new Ingredient('Chicken', 1), new Ingredient('Garlic', 20)]
-    ),
-    new Recipe(
-      'Chicken Tikka',
-      'This is the recipe',
-      'http://assets.kraftfoods.com/recipe_images/opendeploy/173356_640x428.jpg',
-      [new Ingredient('Chicken', 2), new Ingredient('Pepper', 20)]
-    )
-  ];
+  private recipes: Recipe[];
 
   getRecipes() {
-    // Return as a new Recipe array
-    return this.recipes.slice();
+    this.http.get('/api/recipe').subscribe(
+      (recipes: any) => {
+        this.recipes = [];
+        recipes.forEach((recipe: any) => {
+          if (recipe) {
+            const ingredients = [];
+            if (recipe.ingredients && recipe.ingredients.length > 0) {
+              recipe.ingredients.forEach(ingredient =>
+                ingredients.push(this.generateIngredient(ingredient))
+              );
+            }
+            this.recipes.push(this.generateRecipe(recipe, ingredients));
+            this.recipesUpdated.next(this.recipes.slice());
+          }
+        });
+      },
+      err => console.log(err)
+    );
+  }
+
+  private generateIngredient(ingredient) {
+    return new Ingredient(ingredient.id, ingredient.name, ingredient.amount);
+  }
+
+  private generateRecipe(recipe, ingredients) {
+    return new Recipe(
+      recipe.id,
+      recipe.name,
+      recipe.description,
+      recipe.image,
+      ingredients
+    );
   }
 
   getRecipeByIndex(id: number) {
