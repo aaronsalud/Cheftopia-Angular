@@ -6,7 +6,7 @@ import { RecipeFormComponent } from '../components/recipes/recipe-form/recipe-fo
 import { LandingComponent } from '../components/landing/landing.component';
 import { LoginComponent } from '../components/auth/login/login.component';
 import { SignupComponent } from '../components/auth/signup/signup.component';
-
+import { AuthGuard } from '../components/auth/auth.guard';
 export const appRoutes: Routes = [
   {
     path: 'recipes',
@@ -16,12 +16,14 @@ export const appRoutes: Routes = [
       { path: 'new', component: RecipeFormComponent },
       { path: ':id', component: RecipeDetailComponent },
       { path: ':id/edit', component: RecipeFormComponent }
-    ]
+    ],
+    canActivate: [AuthGuard]
   },
   {
     path: 'shopping-list',
     pathMatch: 'full',
-    component: ShoppingListComponent
+    component: ShoppingListComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'login',
