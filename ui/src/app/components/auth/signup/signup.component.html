@@ -5,25 +5,33 @@
         <div class="col-md-7 m-auto py-4 card">
           <h1 class="display-4 text-center">Sign Up</h1>
           <p class="lead text-center">Create your Cheftopia account</p>
-          <form (ngSubmit)="saveItem(form)" #form="ngForm">
+          <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
             <div class="form-group">
               <label for="name">Name</label>
-              <input type="text" id="name" name="name" ngModel class="form-control" required>
+              <input type="text" id="name" formControlName="name" class="form-control" [ngClass]="{'is-invalid':( errors && errors.name)}"
+                required>
+              <div *ngIf="errors && errors.name" class="invalid-feedback">{{errors.name}}</div>
             </div>
             <div class="form-group">
               <label for="email">Email</label>
-              <input type="text" id="email" name="email" ngModel class="form-control" required>
+              <input type="text" id="email" formControlName="email" class="form-control" [ngClass]="{'is-invalid':( errors && errors.email)}"
+                required>
+              <div *ngIf="errors && errors.email" class="invalid-feedback">{{errors.email}}</div>
             </div>
             <div class="form-group">
               <label for="password">Password</label>
-              <input type="password" id="password" name="password" ngModel class="form-control" required>
+              <input type="password" id="password" formControlName="password" class="form-control" [ngClass]="{'is-invalid':( errors && errors.password)}"
+                required>
+              <div *ngIf="errors && errors.password" class="invalid-feedback">{{errors.password}}</div>
             </div>
             <div class="form-group">
               <label for="password2">Confirm Password</label>
-              <input type="password2" id="amount" name="password2" ngModel class="form-control" required>
+              <input type="password" id="password2" formControlName="password2" class="form-control" [ngClass]="{'is-invalid':( errors && errors.password2)}"
+                required>
+              <div *ngIf="errors && errors.password2" class="invalid-feedback">{{errors.password2}}</div>
             </div>
             <div class="form-group">
-              <button class="btn btn-success btn-block" type="submit" [disabled]="!form.valid">Register Account</button>
+              <button class="btn btn-success btn-block" type="submit" [disabled]="!signUpForm.valid">Register Account</button>
             </div>
           </form>
         </div>
