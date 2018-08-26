@@ -14,7 +14,7 @@ export class AccessGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     if (this.authService.getAuthToken()) {
       // If logged in and hitting a public route, redirect to recipes
-      if (route.data.isPublicOnly) {
+      if (route && route.data && route.data.isPublicOnly) {
         this.router.navigate(['/recipes']);
       }
       // logged in so return true
