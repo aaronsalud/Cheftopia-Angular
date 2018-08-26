@@ -29,13 +29,20 @@ export const appRoutes: Routes = [
     path: 'login',
     pathMatch: 'full',
     component: LoginComponent
+    // canActivate: [!AuthGuard]
   },
   {
     path: 'register',
     pathMatch: 'full',
     component: SignupComponent
+    // canActivate: [!AuthGuard]
   },
-  { path: '', pathMatch: 'full', component: LandingComponent }
+  {
+    path: '',
+    pathMatch: 'full',
+    component: LandingComponent
+    // canActivate: [!AuthGuard]
+  }
   // {
   //   path: '',
   //   redirectTo: '/recipes',
