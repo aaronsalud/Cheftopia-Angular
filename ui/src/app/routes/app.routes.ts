@@ -6,7 +6,7 @@ import { RecipeFormComponent } from '../components/recipes/recipe-form/recipe-fo
 import { LandingComponent } from '../components/landing/landing.component';
 import { LoginComponent } from '../components/auth/login/login.component';
 import { SignupComponent } from '../components/auth/signup/signup.component';
-import { AuthGuard } from '../components/auth/auth.guard';
+import { AuthGuard } from '../components/auth/guards/auth.guard';
 export const appRoutes: Routes = [
   {
     path: 'recipes',

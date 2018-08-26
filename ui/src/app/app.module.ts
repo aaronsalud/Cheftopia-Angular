@@ -5,8 +5,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 // import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthInterceptor } from './components/auth/auth.interceptor';
-import { AuthErrorInterceptor } from './components/auth/auth-error.interceptor';
+import { AuthInterceptor } from './components/auth/interceptors/auth.interceptor';
+import { AuthErrorInterceptor } from './components/auth/interceptors/auth-error.interceptor';
 
 import { AppRoutingModule } from './routes/app-routing.module';
 import { AppJwtModule } from './components/auth/app-jwt-module';
