@@ -6,14 +6,21 @@ import {
   RouterStateSnapshot
 } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { nextTick } from 'q';
 
 @Injectable({ providedIn: 'root' })
-export class AuthGuard implements CanActivate {
+export class AccessGuard implements CanActivate {
   constructor(private router: Router, private authService: AuthService) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     if (this.authService.getAuthToken()) {
+      // If logged in and hitting a public route, redirect to recipes
+      if (route.data.isPublicOnly) {
+        this.router.navigate(['/recipes']);
+      }
       // logged in so return true
+      return true;
+    } else if (route.data.isPublicOnly) {
       return true;
     }
 
