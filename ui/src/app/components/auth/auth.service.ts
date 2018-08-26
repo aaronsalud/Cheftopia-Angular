@@ -9,6 +9,7 @@ import { Subject } from 'rxjs';
 export class AuthService {
   loggedInSuccessfully = new Subject();
   loginErrors = new Subject();
+  signUpErrors = new Subject();
 
   constructor(
     private http: HttpClient,
@@ -24,6 +25,15 @@ export class AuthService {
         this.loggedInSuccessfully.next();
       },
       err => this.loginErrors.next(err)
+    );
+  }
+
+  signup(data) {
+    return this.http.post('/api/users/register', data).subscribe(
+      data => {
+        this.router.navigate(['/recipes']);
+      },
+      err => this.signUpErrors.next(err)
     );
   }
 
