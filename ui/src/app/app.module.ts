@@ -2,7 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './components/auth/auth.interceptors';
 
 import { AppRoutingModule } from './routes/app-routing.module';
 import { AppComponent } from './app.component';
@@ -20,6 +21,7 @@ import { LoginComponent } from './components/auth/login/login.component';
 import { SignupComponent } from './components/auth/signup/signup.component';
 import { LandingComponent } from './components/landing/landing.component';
 import { LayoutComponent } from './components/layout/layout.component';
+import { AuthService } from './components/auth/auth.service';
 
 @NgModule({
   declarations: [
@@ -45,7 +47,17 @@ import { LayoutComponent } from './components/layout/layout.component';
     ReactiveFormsModule,
     NgbModule.forRoot()
   ],
-  providers: [ShoppingListService, RecipeService],
+  providers: [
+    ShoppingListService,
+    RecipeService,
+    AuthService
+    // AuthInterceptor
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: AuthInterceptor,
+    //   multi: true
+    // }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
