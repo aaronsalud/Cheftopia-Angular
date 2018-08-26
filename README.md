@@ -1,6 +1,6 @@
-# CheftopiaAngular
+# Cheftopia-Angular
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.1.3.
+This project is built with Angular 6, Node, Express, and PostgresSQL with Sequelize ORM. It is built for demo and educational purposes only.
 
 ## Development server
 
