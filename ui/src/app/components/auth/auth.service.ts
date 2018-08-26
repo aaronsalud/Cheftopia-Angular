@@ -3,10 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { User } from './user.model';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
 
 @Injectable()
 export class AuthService {
-  currentUser: User;
+  loggedInSuccessfully = new Subject();
+
   constructor(
     private http: HttpClient,
     public jwtHelper: JwtHelperService,
@@ -17,7 +19,8 @@ export class AuthService {
     return this.http.post('/api/users/login', data).subscribe(
       data => {
         this.setAuthToken(data['token']);
-        this.setCurrentUser(data['token']);
+        this.router.navigate(['/recipes']);
+        this.loggedInSuccessfully.next();
       },
       err => console.log(err)
     );
@@ -27,13 +30,14 @@ export class AuthService {
     localStorage.setItem('jwtToken', token);
   }
 
-  private setCurrentUser(token) {
-    const { id, name, avatar, exp } = this.jwtHelper.decodeToken(token);
-    this.currentUser = new User(id, name, avatar, exp);
-  }
-
   getCurrentUser() {
-    return this.currentUser;
+    const token = this.getAuthToken();
+    if (token) {
+      const { id, name, avatar, exp } = this.jwtHelper.decodeToken(token);
+      const currentUser = new User(id, name, avatar, exp);
+      return currentUser;
+    }
+    return null;
   }
 
   getAuthToken() {
