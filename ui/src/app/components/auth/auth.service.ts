@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 @Injectable()
 export class AuthService {
   loggedInSuccessfully = new Subject();
+  loginErrors = new Subject();
 
   constructor(
     private http: HttpClient,
@@ -22,7 +23,7 @@ export class AuthService {
         this.router.navigate(['/recipes']);
         this.loggedInSuccessfully.next();
       },
-      err => console.log(err)
+      err => this.loginErrors.next(err)
     );
   }
 
