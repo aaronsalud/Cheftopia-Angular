@@ -6,7 +6,6 @@ import {
   RouterStateSnapshot
 } from '@angular/router';
 import { AuthService } from '../auth.service';
-import { nextTick } from 'q';
 
 @Injectable({ providedIn: 'root' })
 export class AccessGuard implements CanActivate {
