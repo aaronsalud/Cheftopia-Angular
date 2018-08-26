@@ -16,15 +16,15 @@ export class LoginComponent implements OnInit, OnDestroy {
   shoppingListForm: NgForm;
   constructor(private authService: AuthService) {}
 
-  ngOnInit() {}
-
-  login(form: NgForm) {
+  ngOnInit() {
     this.logInErrorsSubscription = this.authService.loginErrors.subscribe(
       errors => {
         this.errors = errors;
       }
     );
+  }
 
+  login(form: NgForm) {
     const { value } = form;
     this.authService.login(value);
   }
