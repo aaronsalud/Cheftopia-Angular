@@ -3,9 +3,13 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthInterceptor } from './components/auth/auth.interceptors';
+
+// import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './components/auth/auth.interceptor';
+import { AuthErrorInterceptor } from './components/auth/auth-error.interceptor';
 
 import { AppRoutingModule } from './routes/app-routing.module';
+import { AppJwtModule } from './components/auth/app-jwt-module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
 import { RecipesComponent } from './components/recipes/recipes.component';
@@ -42,6 +46,7 @@ import { AuthService } from './components/auth/auth.service';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    AppJwtModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
@@ -50,13 +55,17 @@ import { AuthService } from './components/auth/auth.service';
   providers: [
     ShoppingListService,
     RecipeService,
-    AuthService
-    // AuthInterceptor
-    // {
-    //   provide: HTTP_INTERCEPTORS,
-    //   useClass: AuthInterceptor,
-    //   multi: true
-    // }
+    AuthService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthErrorInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })
