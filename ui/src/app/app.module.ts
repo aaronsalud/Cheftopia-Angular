@@ -6,7 +6,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 // import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './components/auth/interceptors/auth.interceptor';
-import { AuthErrorInterceptor } from './components/auth/interceptors/auth-error.interceptor';
+import { HttpErrorInterceptor } from './components/auth/interceptors/http-error.interceptor';
 
 import { AppRoutingModule } from './routes/app-routing.module';
 import { AppJwtModule } from './components/auth/app-jwt-module';
@@ -63,7 +63,7 @@ import { AuthService } from './components/auth/auth.service';
     },
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: AuthErrorInterceptor,
+      useClass: HttpErrorInterceptor,
       multi: true
     }
   ],
