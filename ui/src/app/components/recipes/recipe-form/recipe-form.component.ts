@@ -39,18 +39,11 @@ export class RecipeFormComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    // if (this.editMode) {
-    //   this.recipeService.editRecipe(this.id, this.recipeForm.value);
-    // } else {
-    //   this.recipeService.addRecipe(this.recipeForm.value);
-    // }
-    //Exit form
-    // this.onCancel();
-    console.log(this.recipeForm.value);
-  }
-
-  onCancel() {
-    this.router.navigate(['../'], { relativeTo: this.route });
+    if (this.editMode) {
+      this.recipeService.editRecipe(this.id, this.recipeForm.value);
+    } else {
+      this.recipeService.addRecipe(this.recipeForm.value);
+    }
   }
 
   addIngredientInputGroup() {
