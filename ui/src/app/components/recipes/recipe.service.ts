@@ -99,7 +99,6 @@ export class RecipeService {
           );
           this.recipes[index] = this.generateRecipe(recipe, ingredients);
           this.recipesUpdated.next(this.recipes.slice());
-          console.log(this.route);
           this.router.navigate(['../'], { relativeTo: this.route });
         }
       },
@@ -107,9 +106,18 @@ export class RecipeService {
     );
   }
 
-  deleteRecipe(index: number) {
-    this.recipes.splice(index, 1);
-    this.recipesUpdated.next(this.recipes.slice());
+  deleteRecipe(id: number) {
+    this.http.delete(`/api/recipe/${id}`).subscribe(
+      () => {
+        const index = this.recipes.findIndex(
+          recipeItem => recipeItem.id === id
+        );
+        this.recipes.splice(index, 1);
+        this.recipesUpdated.next(this.recipes.slice());
+        this.router.navigate(['/recipes']);
+      },
+      err => this.recipeFormErrors.next(err)
+    );
   }
 
   addIngredientsToShoppingList(ingredients: Ingredient[]) {
