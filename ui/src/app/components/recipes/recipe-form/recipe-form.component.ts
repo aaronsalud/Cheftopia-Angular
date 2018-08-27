@@ -32,6 +32,8 @@ export class RecipeFormComponent implements OnInit, OnDestroy {
       this.editMode = params['id'] != null;
       this.initForm();
     });
+
+    this.recipeService.setCurrentRoute(this.route);
   }
 
   ngOnDestroy() {
