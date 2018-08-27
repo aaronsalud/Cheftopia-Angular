@@ -4,13 +4,17 @@ import { ShoppingListService } from '../shopping-list/shopping-list.service';
 import { Recipe } from './recipe.model';
 import { Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Injectable()
 export class RecipeService {
   recipesUpdated = new Subject<Recipe[]>();
+  recipeFormErrors = new Subject();
   constructor(
     private shoppingListService: ShoppingListService,
-    private http: HttpClient
+    private http: HttpClient,
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   private recipes: Recipe[];
@@ -57,8 +61,22 @@ export class RecipeService {
   }
 
   addRecipe(recipe: Recipe) {
-    this.recipes.push(recipe);
-    this.recipesUpdated.next(this.recipes.slice());
+    this.http.post('/api/recipe', recipe).subscribe(
+      (recipe: any) => {
+        if (recipe) {
+          const ingredients = [];
+          if (recipe.ingredients && recipe.ingredients.length > 0) {
+            recipe.ingredients.forEach(ingredient =>
+              ingredients.push(this.generateIngredient(ingredient))
+            );
+          }
+          this.recipes.push(this.generateRecipe(recipe, ingredients));
+          this.recipesUpdated.next(this.recipes.slice());
+          this.router.navigate(['../'], { relativeTo: this.route });
+        }
+      },
+      err => this.recipeFormErrors.next(err)
+    );
   }
 
   editRecipe(index: number, newRecipe: Recipe) {
