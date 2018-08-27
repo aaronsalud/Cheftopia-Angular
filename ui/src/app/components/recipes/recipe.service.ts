@@ -10,11 +10,11 @@ import { Router, ActivatedRoute } from '@angular/router';
 export class RecipeService {
   recipesUpdated = new Subject<Recipe[]>();
   recipeFormErrors = new Subject();
+  route: ActivatedRoute;
   constructor(
     private shoppingListService: ShoppingListService,
     private http: HttpClient,
-    private router: Router,
-    private route: ActivatedRoute
+    private router: Router
   ) {}
 
   private recipes: Recipe[];
@@ -38,6 +38,10 @@ export class RecipeService {
       },
       err => console.log(err)
     );
+  }
+
+  setCurrentRoute(currentRoute: ActivatedRoute) {
+    this.route = currentRoute;
   }
 
   private generateIngredient(ingredient) {
@@ -79,9 +83,28 @@ export class RecipeService {
     );
   }
 
-  editRecipe(index: number, newRecipe: Recipe) {
-    this.recipes[index] = newRecipe;
-    this.recipesUpdated.next(this.recipes.slice());
+  editRecipe(id: number, recipe: Recipe) {
+    this.http.put(`/api/recipe/${id}`, recipe).subscribe(
+      (recipe: any) => {
+        if (recipe) {
+          const ingredients = [];
+          if (recipe.ingredients && recipe.ingredients.length > 0) {
+            recipe.ingredients.forEach(ingredient =>
+              ingredients.push(this.generateIngredient(ingredient))
+            );
+          }
+
+          const index = this.recipes.findIndex(
+            recipeItem => recipeItem.id === recipe.id
+          );
+          this.recipes[index] = this.generateRecipe(recipe, ingredients);
+          this.recipesUpdated.next(this.recipes.slice());
+          console.log(this.route);
+          this.router.navigate(['../'], { relativeTo: this.route });
+        }
+      },
+      err => this.recipeFormErrors.next(err)
+    );
   }
 
   deleteRecipe(index: number) {
