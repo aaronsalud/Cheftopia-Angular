@@ -50,8 +50,10 @@ export class RecipeService {
     );
   }
 
-  getRecipeByIndex(id: number) {
-    return this.recipes[id];
+  getRecipeById(id: number) {
+    return this.recipes && this.recipes.length > 0
+      ? this.recipes.filter((recipe: Recipe) => recipe.id === id)[0]
+      : null;
   }
 
   addRecipe(recipe: Recipe) {
