@@ -46,6 +46,10 @@ export class RecipeFormComponent implements OnInit, OnDestroy {
     }
   }
 
+  onCancel() {
+    this.router.navigate(['../'], { relativeTo: this.route });
+  }
+
   addIngredientInputGroup() {
     // Cast to FormArray
     (<FormArray>this.recipeForm.get('ingredients')).push(
