@@ -24,11 +24,19 @@
                 <li class="nav-item" *ngIf="!isLoggedIn">
                     <a routerLink="/login" routerLinkActive="active" class="nav-link">Login</a>
                 </li>
+
+                <!-- <li class="nav-item">
+                    <span class="nav-link">
+                        <img class="rounded-circle" [src]="currentUser.avatar" alt="" style="width:25px; margin-right:5px;">
+                    </span>
+                </li> -->
                 <li class="nav-item dropdown" [hidden]="!isLoggedIn">
-                    <a class="nav-link dropdown-toggle" role="button" aria-haspopup="true" aria-controls="mobile-nav" ngbDropdownToggle>{{currentUser
-                        ? currentUser.name : ''}}</a>
+                    <div class="nav-link dropdown-toggle" role="button" aria-haspopup="true" aria-controls="mobile-nav" ngbDropdownToggle>
+                        <img class="rounded-circle" [src]="currentUser.avatar" alt="" style="width:25px; margin-right:10px;"><span
+                            style="display:inline-block; vertical-align:bottom;">{{currentUser ? currentUser.name : ''}}</span>
+                    </div>
                     <div class="dropdown-menu" id="manage-nav" ngbDropdownMenu>
-                        <a class="dropdown-item" (click)="logout()">Sign out</a>
+                        <span class="dropdown-item" (click)="logout()">Sign out</span>
                     </div>
                 </li>
             </ul>
