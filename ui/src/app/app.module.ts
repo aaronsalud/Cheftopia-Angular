@@ -26,6 +26,7 @@ import { SignupComponent } from './components/auth/signup/signup.component';
 import { LandingComponent } from './components/landing/landing.component';
 import { LayoutComponent } from './components/layout/layout.component';
 import { AuthService } from './components/auth/auth.service';
+import { ShoppingListItemComponent } from './components/shopping-list/shopping-list-item/shopping-list-item.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { AuthService } from './components/auth/auth.service';
     LoginComponent,
     SignupComponent,
     LandingComponent,
-    LayoutComponent
+    LayoutComponent,
+    ShoppingListItemComponent
   ],
   imports: [
     BrowserModule,
