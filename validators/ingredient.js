@@ -9,7 +9,7 @@ module.exports = function validateIngredientInput(data) {
     data[key] = !isEmpty(data[key]) ? data[key] : '';
   });
 
-  if (!Validator.isInt(data.amount)) {
+  if (!Validator.isInt(data.amount.toString())) {
     errors.amount = 'Amount field does not contain a valid amount';
   }
 
@@ -17,7 +17,7 @@ module.exports = function validateIngredientInput(data) {
     errors.name = 'Name field is required';
   }
 
-  if (Validator.isEmpty(data.amount)) {
+  if (Validator.isEmpty(data.amount.toString())) {
     errors.amount = 'Amount field is required';
   }
 
