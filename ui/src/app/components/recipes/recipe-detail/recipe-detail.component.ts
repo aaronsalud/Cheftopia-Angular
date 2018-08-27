@@ -1,15 +1,17 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Recipe } from '../recipe.model';
 import { RecipeService } from '../recipe.service';
 import { Ingredient } from '../../shared/ingredient.model';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-recipe-detail',
   templateUrl: './recipe-detail.component.html',
   styleUrls: ['./recipe-detail.component.css']
 })
-export class RecipeDetailComponent implements OnInit {
+export class RecipeDetailComponent implements OnInit, OnDestroy {
+  recipesUpdatedSubscription: Subscription;
   recipe: Recipe;
   id: number;
 
@@ -33,9 +35,17 @@ export class RecipeDetailComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.recipesUpdatedSubscription = this.recipeService.recipesUpdated.subscribe(
+      () => (this.recipe = this.recipeService.getRecipeById(this.id))
+    );
+
     this.route.params.subscribe((params: Params) => {
       this.id = +params['id'];
-      this.recipe = this.recipeService.getRecipeByIndex(this.id);
+      this.recipe = this.recipeService.getRecipeById(this.id);
     });
+  }
+
+  ngOnDestroy() {
+    this.recipesUpdatedSubscription.unsubscribe();
   }
 }
