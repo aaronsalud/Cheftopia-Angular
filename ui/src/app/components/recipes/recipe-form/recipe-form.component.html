@@ -11,15 +11,18 @@
                 <div class="col-12">
                     <div class="form-group">
                         <label for="name">Name</label>
-                        <input type="text" formControlName="name" id="name" class="form-control">
+                        <input type="text" formControlName="name" id="name" class="form-control" [ngClass]="{'is-invalid': (errors && errors.name)}">
+                        <div *ngIf="errors && errors.name" class="invalid-feedback">{{errors.name}}</div>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-12">
                     <div class="form-group">
-                        <label for="imagePath">Image URL</label>
-                        <input type="text" formControlName="imagePath" id="imagePath" class="form-control" #imagePath>
+                        <label for="image">Image URL</label>
+                        <input type="text" formControlName="image" id="image" class="form-control" [ngClass]="{'is-invalid': (errors && errors.image)}"
+                            #imagePath>
+                        <div *ngIf="errors && errors.image" class="invalid-feedback">{{errors.image}}</div>
                     </div>
                 </div>
             </div>
@@ -32,7 +35,9 @@
                 <div class="col-12">
                     <div class="form-group">
                         <label for="description">Description</label>
-                        <textarea type="text" formControlName="description" id="description" class="form-control" row="6"></textarea>
+                        <textarea type="text" formControlName="description" id="description" class="form-control" [ngClass]="{'is-invalid': (errors && errors.description)}"
+                            row="6"></textarea>
+                        <div *ngIf="errors && errors.description" class="invalid-feedback">{{errors.description}}</div>
                     </div>
                 </div>
             </div>
@@ -40,6 +45,7 @@
                 <div class="col-12" formArrayName="ingredients">
                     <label for="ingredients">Ingredients</label>
                     <div class="row my-2" *ngFor="let ingredientsFormControl of recipeForm.get('ingredients').controls; let i = index;" [formGroupName]="i">
+                        <input type="hidden" formControlName="id">
                         <div class="col-8">
                             <input type="text" class="form-control" formControlName="name">
                         </div>
