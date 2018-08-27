@@ -10,7 +10,7 @@ import { AuthService } from '../auth.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
   intercept(
     request: HttpRequest<any>,
     next: HttpHandler
@@ -20,9 +20,10 @@ export class AuthInterceptor implements HttpInterceptor {
     const currentUser = this.authService.getCurrentUser();
     if (currentUser && authToken) {
       request = request.clone({
-        setHeaders: {
-          Authorization: authToken
-        }
+        headers: request.headers
+          .set('Authorization', authToken)
+          .set('Cache-Control', 'no-cache')
+          .set('Pragma', 'no-cache')
       });
     }
 
