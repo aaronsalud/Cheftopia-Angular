@@ -10,23 +10,15 @@ import { ShoppingList } from './shopping-list.model';
   styleUrls: ['./shopping-list.component.css']
 })
 export class ShoppingListComponent implements OnInit, OnDestroy {
-  shoppinglists: ShoppingList[];
   ingredients: Ingredient[];
-  private shoppinglistsUpdatedSubscription: Subscription;
   private ingredientsChangedSubscription: Subscription;
-  constructor(private shoppingListService: ShoppingListService) { }
+  constructor(private shoppingListService: ShoppingListService) {}
 
   editItem(index: number) {
     this.shoppingListService.ingredientEdit.next(index);
   }
 
   setupSubscriptions() {
-    this.shoppinglistsUpdatedSubscription = this.shoppingListService.shoppinglistsUpdated.subscribe(
-      (shoppinglists: ShoppingList[]) => {
-        this.shoppinglists = shoppinglists;
-        console.log(this.shoppinglists);
-      }
-    );
     this.ingredientsChangedSubscription = this.shoppingListService.ingredientsChanged.subscribe(
       (ingredients: Ingredient[]) => (this.ingredients = ingredients)
     );
@@ -35,11 +27,9 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.setupSubscriptions();
     this.shoppingListService.getShoppingLists();
-    // this.ingredients = this.shoppingListService.getIngredients();
   }
 
   ngOnDestroy() {
     this.ingredientsChangedSubscription.unsubscribe();
-    this.shoppinglistsUpdatedSubscription.unsubscribe();
   }
 }
