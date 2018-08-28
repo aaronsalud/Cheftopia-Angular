@@ -1,3 +1,15 @@
-<p>
-  shopping-list-item works!
-</p>
+<div class="shopping-list-item card">
+
+  <h4>{{shoppinglist.name}}</h4>
+
+  <p class="description">{{shoppinglist.description}}</p>
+
+  <ul *ngIf="shoppinglist.ingredients && shoppinglist.ingredients.length > 0" class="list-group">
+    <li *ngFor="let ingredient of shoppinglist.ingredients" class="list-group-item">{{ingredient.amount}} {{ingredient.name}}</li>
+  </ul>
+
+  <p *ngIf="!shoppinglist.ingredients || shoppinglist.ingredients.length == 0" class="list-group-item">
+    <i>No Ingredients Added Yet</i>
+  </p>
+
+</div>
