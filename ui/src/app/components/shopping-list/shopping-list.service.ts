@@ -17,7 +17,7 @@ export class ShoppingListService {
     new Ingredient(2, 'Tomatoes', 10)
   ];
 
-  constructor(private router: Router, private http: HttpClient) { }
+  constructor(private router: Router, private http: HttpClient) {}
 
   private generateIngredient(ingredient) {
     return new Ingredient(ingredient.id, ingredient.name, ingredient.amount);
@@ -43,15 +43,33 @@ export class ShoppingListService {
     );
   }
 
+  composeQueryString(queryParams) {
+    if (!queryParams) {
+      return '/api/shoppinglist';
+    }
+
+    let queryString = '/api/shoppinglist';
+    let i = 0;
+
+    Object.keys(queryParams).forEach(key => {
+      queryString += `${i === 0 ? '?' : '&'}${key}=${queryParams[key]}`;
+    });
+    return queryString;
+  }
+
   // Fetch Shopping Lists Method
-  getShoppingLists() {
-    this.http.get('/api/shoppinglist').subscribe(
+  getShoppingLists(queryParams = null) {
+    this.http.get(this.composeQueryString(queryParams)).subscribe(
       (shoppinglists: any) => {
         this.shopping_lists = [];
         shoppinglists.forEach((shoppinglist: any) => {
           if (shoppinglist) {
-            const ingredients = this.generateIngredients(shoppinglist.ingredients);
-            this.shopping_lists.push(this.generateShoppingList(shoppinglist, ingredients));
+            const ingredients = this.generateIngredients(
+              shoppinglist.ingredients
+            );
+            this.shopping_lists.push(
+              this.generateShoppingList(shoppinglist, ingredients)
+            );
           }
         });
         this.shoppinglistsUpdated.next(this.shopping_lists.slice());
