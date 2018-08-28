@@ -7,6 +7,7 @@ import { LandingComponent } from '../components/landing/landing.component';
 import { LoginComponent } from '../components/auth/login/login.component';
 import { SignupComponent } from '../components/auth/signup/signup.component';
 import { AccessGuard } from '../components/auth/guards/access.guard';
+import { ShoppingListItemsComponent } from '../components/shopping-list/shopping-list-items/shopping-list-items.component';
 export const appRoutes: Routes = [
   {
     path: 'recipes',
@@ -23,6 +24,12 @@ export const appRoutes: Routes = [
     path: 'shopping-list',
     pathMatch: 'full',
     component: ShoppingListComponent,
+    children: [
+      { path: '', component: ShoppingListItemsComponent }
+      // { path: 'new', component: ShoppingListItemsComponent },
+      // { path: ':id', component: ShoppingListItemsComponent },
+      // { path: ':id', component: ShoppingListItemsComponent }
+    ],
     canActivate: [AccessGuard]
   },
   {
