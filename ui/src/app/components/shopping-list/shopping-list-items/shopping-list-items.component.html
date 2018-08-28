@@ -1,9 +1,9 @@
 <div class="shopping-list-items">
-  <div class="row">
-    <div class="col-3 mb-3">
+  <div class="form-inline mb-3">
+    <div class="form-group mr-3">
       <button [routerLink]="['new']" class="btn btn-success">Create a new Shoping List</button>
     </div>
-    <div class="col-2 mb-3">
+    <div class="form-group">
       <select class="custom-select" [(ngModel)]="selectedArchiveOption" (ngModelChange)="onArchiveFilterChange($event)">
         <option *ngFor="let archiveOption of archiveSelectOptions" [ngValue]="archiveOption.value">{{archiveOption.name}}</option>
       </select>
