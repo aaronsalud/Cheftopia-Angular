@@ -30,5 +30,6 @@ export class ShoppingListItemsComponent implements OnInit {
         this.shoppinglists = shoppinglists;
       }
     );
+    this.shoppingListService.getShoppingLists();
   }
 }
