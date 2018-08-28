@@ -36,6 +36,24 @@ router.get(
   }
 );
 
+// @route GET api/shoppinglist/:id
+// @desc Get Shopping List by Id
+// @access Private
+router.get(
+  '/:id',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+
+    ShoppingList.findById(req.params.id, {
+      where: { user_id: req.user.id }
+    })
+      .then(shopping_list => {
+        res.json(shopping_list);
+      })
+      .catch(err => res.status(404).json(err));
+  }
+);
+
 // @route POST api/shoppinglist
 // @desc Create a Shopping List
 // @access Private
@@ -124,7 +142,7 @@ router.delete(
     ShoppingList.findById(req.params.id, { where: { user_id: req.user.id } })
       .then(shoppinglist => {
         // Delete associated Ingredients
-        Ingredient.destroy({ where: { ingredientable_id: req.params.id , ingredientable: 'ShoppingList'} })
+        Ingredient.destroy({ where: { ingredientable_id: req.params.id, ingredientable: 'ShoppingList' } })
           .then(response => { return response; })
           .then(response => {
             // Delete the shopping list
