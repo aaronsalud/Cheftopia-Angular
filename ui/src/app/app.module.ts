@@ -27,6 +27,7 @@ import { LandingComponent } from './components/landing/landing.component';
 import { LayoutComponent } from './components/layout/layout.component';
 import { AuthService } from './components/auth/auth.service';
 import { ShoppingListItemComponent } from './components/shopping-list/shopping-list-item/shopping-list-item.component';
+import { ShoppingListItemsComponent } from './components/shopping-list/shopping-list-items/shopping-list-items.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { ShoppingListItemComponent } from './components/shopping-list/shopping-l
     SignupComponent,
     LandingComponent,
     LayoutComponent,
-    ShoppingListItemComponent
+    ShoppingListItemComponent,
+    ShoppingListItemsComponent
   ],
   imports: [
     BrowserModule,
