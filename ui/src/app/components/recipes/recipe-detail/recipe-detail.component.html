@@ -12,11 +12,12 @@
     </div>
     <div class="row">
       <div class="col-12">
-        <div class="btn-group recipe-actions-dropdown" ngbDropdown>
+        <div class="dropdown recipe-actions-dropdown" ngbDropdown>
           <button class="btn btn-primary dropdown-toggle" type="button" ngbDropdownToggle>Manage Recipe</button>
           <div class="dropdown-menu" ngbDropdownMenu>
             <span class="dropdown-item" (click)="addIngredientsToShoppingList(recipe.ingredients)">Add Ingredient to Shopping
-              List</span>
+              List
+            </span>
             <span class="dropdown-item" (click)="editRecipe()">Edit Recipe</span>
             <span class="dropdown-item" (click)="deleteRecipe()">Delete Recipe</span>
           </div>
