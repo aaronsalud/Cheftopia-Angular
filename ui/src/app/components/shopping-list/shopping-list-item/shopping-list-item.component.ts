@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { ShoppingList } from '../shopping-list.model';
 
 @Component({
   selector: 'app-shopping-list-item',
@@ -6,10 +7,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./shopping-list-item.component.css']
 })
 export class ShoppingListItemComponent implements OnInit {
+  @Input()
+  shoppinglist: ShoppingList;
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }
