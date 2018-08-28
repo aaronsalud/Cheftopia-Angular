@@ -28,6 +28,7 @@ import { LayoutComponent } from './components/layout/layout.component';
 import { AuthService } from './components/auth/auth.service';
 import { ShoppingListItemComponent } from './components/shopping-list/shopping-list-item/shopping-list-item.component';
 import { ShoppingListItemsComponent } from './components/shopping-list/shopping-list-items/shopping-list-items.component';
+import { ShoppingListFormComponent } from './components/shopping-list/shopping-list-form/shopping-list-form.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { ShoppingListItemsComponent } from './components/shopping-list/shopping-
     LandingComponent,
     LayoutComponent,
     ShoppingListItemComponent,
-    ShoppingListItemsComponent
+    ShoppingListItemsComponent,
+    ShoppingListFormComponent
   ],
   imports: [
     BrowserModule,

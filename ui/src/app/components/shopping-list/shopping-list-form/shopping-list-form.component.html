@@ -1,0 +1,29 @@
+<div class="row my-3">
+  <div class="col-6">
+    <div class=form-group>
+      <button [routerLink]="['../']" class="btn btn-primary">Back</button>
+    </div>
+    <form (ngSubmit)="saveItem(form)" #form="ngForm">
+      <div class="row">
+        <div class="col">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" ngModel (ngModelChange)="generatePreview(form)" class="form-control" required>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <label for="description">Description</label>
+          <input type="text" id="" name="description" ngModel (ngModelChange)="generatePreview(form)" class="form-control" required>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-12">
+          <button class="btn btn-success mr-1" type="submit" [disabled]="!form.valid">{{ editMode ? 'Save Changes' : 'Create'}}</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="col-6">
+    <app-shopping-list-item *ngIf="shoppingListPreview" [shoppinglist]="shoppingListPreview" [hideActions]="true"></app-shopping-list-item>
+  </div>
+</div>
