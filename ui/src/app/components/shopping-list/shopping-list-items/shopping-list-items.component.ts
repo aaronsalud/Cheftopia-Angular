@@ -14,13 +14,14 @@ export class ShoppingListItemsComponent implements OnInit {
   shoppinglists: ShoppingList[];
   archiveSelectOptions = [
     { name: 'Filter by', value: '' },
-    { name: 'Active', value: false },
-    { name: 'Archived', value: true }
+    { name: 'Active', value: 0 },
+    { name: 'Archived', value: 1 }
   ];
   constructor(private shoppingListService: ShoppingListService) {}
 
   onArchiveFilterChange(event) {
-    console.log(event);
+    const queryParams = { archived: event };
+    this.shoppingListService.getShoppingLists(queryParams);
   }
 
   ngOnInit() {
