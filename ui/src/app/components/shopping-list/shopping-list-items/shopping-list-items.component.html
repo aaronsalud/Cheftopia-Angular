@@ -1,0 +1,18 @@
+<div class="shopping-list-items">
+  <div class="row">
+    <div class="col-3 mb-3">
+      <button [routerLink]="['new']" class="btn btn-success">Create a new Shoping List</button>
+    </div>
+    <div class="col-2 mb-3">
+      <select class="custom-select" [(ngModel)]="selectedArchiveOption" (ngModelChange)="onArchiveFilterChange($event)">
+        <option *ngFor="let archiveOption of archiveSelectOptions" [ngValue]="archiveOption.value">{{archiveOption.name}}</option>
+      </select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <!-- <app-shopping-list-item *ngFor="let shoppinglist of shoppinglists;" [shoppinglist]="shoppinglist"></app-shopping-list-item> -->
+      <!-- <app-recipe-item *ngFor="let recipeItem of recipes; let i = index" [recipe]="recipeItem"></app-recipe-item> -->
+    </div>
+  </div>
+</div>
