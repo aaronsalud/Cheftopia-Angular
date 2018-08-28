@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ShoppingListService } from '../shopping-list.service';
+import { Subscription } from 'rxjs';
+import { ShoppingList } from '../shopping-list.model';
 
 @Component({
   selector: 'app-shopping-list-items',
@@ -6,17 +9,25 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./shopping-list-items.component.css']
 })
 export class ShoppingListItemsComponent implements OnInit {
+  shoppinglistsUpdatedSubscription: Subscription;
   selectedArchiveOption = '';
+  shoppinglists: ShoppingList[];
   archiveSelectOptions = [
     { name: 'Filter by', value: '' },
     { name: 'Active', value: false },
     { name: 'Archived', value: true }
   ];
-  constructor() {}
+  constructor(private shoppingListService: ShoppingListService) {}
 
   onArchiveFilterChange(event) {
     console.log(event);
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.shoppinglistsUpdatedSubscription = this.shoppingListService.shoppinglistsUpdated.subscribe(
+      (shoppinglists: ShoppingList[]) => {
+        this.shoppinglists = shoppinglists;
+      }
+    );
+  }
 }
