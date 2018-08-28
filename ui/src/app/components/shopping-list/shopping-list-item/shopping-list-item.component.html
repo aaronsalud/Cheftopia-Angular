@@ -1,7 +1,7 @@
 <div class="shopping-list-item card">
   <h4>{{shoppinglist.name}}</h4>
   <p class="description">{{shoppinglist.description}}</p>
-  <div class="dropdown shoppping-list-item-actions-dropdown" ngbDropdown>
+  <div *ngIf="!hideActions" class="dropdown shoppping-list-item-actions-dropdown" ngbDropdown >
     <button class="btn btn-light dropdown-toggle" type="button" ngbDropdownToggle>Manage Shopping List</button>
     <div class="dropdown-menu" ngbDropdownMenu>
       <span class="dropdown-item">Edit Label</span>

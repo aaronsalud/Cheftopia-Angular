@@ -9,7 +9,11 @@ import { ShoppingList } from '../shopping-list.model';
 export class ShoppingListItemComponent implements OnInit {
   @Input()
   shoppinglist: ShoppingList;
-  constructor() {}
+  @Input()
+  hideActions: boolean;
+  constructor() { }
 
-  ngOnInit() {}
+  ngOnInit() { 
+    
+  }
 }
