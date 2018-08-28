@@ -17,7 +17,7 @@ export class ShoppingListService {
     new Ingredient(2, 'Tomatoes', 10)
   ];
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(private router: Router, private http: HttpClient) { }
 
   private generateIngredient(ingredient) {
     return new Ingredient(ingredient.id, ingredient.name, ingredient.amount);
@@ -76,6 +76,12 @@ export class ShoppingListService {
       },
       err => console.log(err)
     );
+  }
+
+  getShoppingListById(id: number) {
+    return this.shopping_lists && this.shopping_lists.length > 0
+    ? this.shopping_lists.filter((shoppinglist: ShoppingList) => shoppinglist.id === id)[0]
+    : null;
   }
 
   addIngredient(ingredient: Ingredient) {

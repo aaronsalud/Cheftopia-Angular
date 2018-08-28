@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ShoppingList } from '../shopping-list.model';
 import { Ingredient } from '../../shared/ingredient.model';
+import { ActivatedRoute } from '@angular/router';
+import { ShoppingListService } from '../shopping-list.service';
 
 @Component({
   selector: 'app-shopping-list-form',
@@ -13,22 +15,12 @@ export class ShoppingListFormComponent implements OnInit {
   editMode: boolean = false;
   shoppingListPreview: ShoppingList
 
-  constructor() { }
+  constructor(private route: ActivatedRoute, private shoppingListService: ShoppingListService) { }
 
   saveItem(form: NgForm) {
     const { value } = form;
 
     console.log(value);
-    // const newIngredient = new Ingredient(value.name, value.amount);
-    // if (this.editMode) {
-    //   this.shoppingListService.editIngredientByIndex(
-    //     this.editedItemIndex,
-    //     // newIngredient
-    //   );
-    // } else if (value && value.name && value.amount) {
-    //   // this.shoppingListService.addIngredient(newIngredient);
-    // }
-    // this.resetForm();
   }
 
   generatePreview(form: NgForm) {
@@ -42,6 +34,11 @@ export class ShoppingListFormComponent implements OnInit {
   }
 
   ngOnInit() {
+    const shoppingListId: number = +this.route.snapshot.paramMap.get('id');
+    if (shoppingListId) {
+      const shoppinglist = this.shoppingListService.getShoppingListById(shoppingListId);
+
+    }
   }
 
 }
