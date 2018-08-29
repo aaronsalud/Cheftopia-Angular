@@ -82,6 +82,14 @@ export class ShoppingListService {
     return this.http.get(`/api/shoppinglist/${id}`);
   }
 
+  createShoppingList(postData) {
+    return this.http.post(`/api/shoppinglist`, postData);
+  }
+
+  editShoppingList(id, postData) {
+    return this.http.post(`/api/shoppinglist/${id}`, postData);
+  }
+
   addIngredient(ingredient: Ingredient) {
     this.ingredients.push(ingredient);
     this.ingredientsChanged.next(this.ingredients.slice());
