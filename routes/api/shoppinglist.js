@@ -46,6 +46,9 @@ router.get(
       include: [{ ...modelOptions.ingredients }]
     })
       .then(shopping_list => {
+        if (!shopping_list) {
+          throw { error: 'Shopping List not found' };
+        }
         res.json(shopping_list);
       })
       .catch(err => res.status(404).json(err));
