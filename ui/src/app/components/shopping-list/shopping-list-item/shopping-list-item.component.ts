@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ShoppingList } from '../shopping-list.model';
+import { ShoppingListService } from '../shopping-list.service';
 
 @Component({
   selector: 'app-shopping-list-item',
@@ -11,9 +12,11 @@ export class ShoppingListItemComponent implements OnInit {
   shoppinglist: ShoppingList;
   @Input()
   hideActions: boolean;
-  constructor() { }
+  constructor(private shoppingListService: ShoppingListService) {}
 
-  ngOnInit() { 
-    
+  deleteItem(id) {
+    this.shoppingListService.deleteShoppingList(id);
   }
+
+  ngOnInit() {}
 }
