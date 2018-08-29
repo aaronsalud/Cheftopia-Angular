@@ -6,7 +6,7 @@
     <div class="dropdown-menu" ngbDropdownMenu>
       <span class="dropdown-item" [routerLink]="[shoppinglist.id]">Edit Label</span>
       <span class="dropdown-item"> Edit Ingredients</span>
-      <span class="dropdown-item">Delete</span>
+      <span class="dropdown-item" (click)="deleteItem(shoppinglist.id)">Delete</span>
     </div>
   </div>
   <ul *ngIf="shoppinglist.ingredients && shoppinglist.ingredients.length > 0" class="list-group">
