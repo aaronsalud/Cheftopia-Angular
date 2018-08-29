@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ShoppingList } from '../shopping-list.model';
 import { Ingredient } from '../../shared/ingredient.model';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, Params } from '@angular/router';
 import { ShoppingListService } from '../shopping-list.service';
 
 @Component({
@@ -30,6 +30,14 @@ export class ShoppingListFormComponent implements OnInit {
 
     if (!this.editMode) {
       this.shoppingListService.createShoppingList(postData).subscribe(
+        () => {
+          this.router.navigate(['../', { relativeTo: this.route }]);
+        },
+        err => console.log(err)
+      );
+    } else {
+      const id = +this.route.snapshot.paramMap.get('id');
+      this.shoppingListService.editShoppingList(id, postData).subscribe(
         () => {
           this.router.navigate(['../', { relativeTo: this.route }]);
         },
