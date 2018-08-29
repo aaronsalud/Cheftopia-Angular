@@ -25,9 +25,7 @@ router.get(
 
     ShoppingList.findAll({
       where: { archived: isArchived, user_id: req.user.id },
-      include: [
-        { ...modelOptions.ingredients, order: [['updated_at', 'DESC']] }
-      ]
+      include: [{ ...modelOptions.ingredients }]
     })
       .then(shopping_lists => {
         res.json(shopping_lists);
@@ -43,9 +41,9 @@ router.get(
   '/:id',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-
     ShoppingList.findById(req.params.id, {
-      where: { user_id: req.user.id }
+      where: { user_id: req.user.id },
+      include: [{ ...modelOptions.ingredients }]
     })
       .then(shopping_list => {
         res.json(shopping_list);
@@ -81,9 +79,10 @@ router.post(
         });
 
         // Create new shopping list
-        user.createShopping_list(newShoppingList)
+        user
+          .createShopping_list(newShoppingList)
           .then(createdShoppingList => {
-            res.json(createdShoppingList)
+            res.json(createdShoppingList);
           })
           .catch(err =>
             res.status(404).json({ error: 'Failed to create new shoping list' })
@@ -138,18 +137,28 @@ router.delete(
   '/:id',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-
     ShoppingList.findById(req.params.id, { where: { user_id: req.user.id } })
       .then(shoppinglist => {
         // Delete associated Ingredients
-        Ingredient.destroy({ where: { ingredientable_id: req.params.id, ingredientable: 'ShoppingList' } })
-          .then(response => { return response; })
+        Ingredient.destroy({
+          where: {
+            ingredientable_id: req.params.id,
+            ingredientable: 'ShoppingList'
+          }
+        })
+          .then(response => {
+            return response;
+          })
           .then(response => {
             // Delete the shopping list
-            shoppinglist.destroy()
+            shoppinglist
+              .destroy()
               .then(response => res.json({ success: true }));
           });
-      }).catch(err => res.status(404).json({ error: 'Shopping List not found ' }))
+      })
+      .catch(err =>
+        res.status(404).json({ error: 'Shopping List not found ' })
+      );
   }
 );
 
@@ -180,12 +189,19 @@ router.post(
     ShoppingList.findById(req.params.id, { where: { user_id: req.user.id } })
       .then(shoppingList => {
         // Create new ingredient
-        return shoppingList.createIngredient(newIngredient, { returning: true });
-      }).then(response => {
-        // Post Ingredient Creation
-        ShoppingList.findById(req.params.id, { include: [modelOptions.ingredients] }).then(shoppinglist => res.json(shoppinglist));
+        return shoppingList.createIngredient(newIngredient, {
+          returning: true
+        });
       })
-      .catch(err => res.status(404).json({ error: 'Failed to create ingredient' }));
+      .then(response => {
+        // Post Ingredient Creation
+        ShoppingList.findById(req.params.id, {
+          include: [modelOptions.ingredients]
+        }).then(shoppinglist => res.json(shoppinglist));
+      })
+      .catch(err =>
+        res.status(404).json({ error: 'Failed to create ingredient' })
+      );
   }
 );
 
@@ -225,10 +241,12 @@ router.put(
       returning: true
     })
       .then(([rowsUpdated, [updatedIngedient]]) => {
-        return updatedIngedient
+        return updatedIngedient;
       })
       .then(updatedIngredient => {
-        ShoppingList.findById(updatedIngredient.id, { include: [modelOptions.ingredients] }).then(shoppinglist => res.json(shoppinglist));
+        ShoppingList.findById(updatedIngredient.id, {
+          include: [modelOptions.ingredients]
+        }).then(shoppinglist => res.json(shoppinglist));
       })
       .catch(err => res.status(404).json({ error: 'Ingredient not found' }));
   }
@@ -241,15 +259,26 @@ router.delete(
   '/:id/ingredient/:ingredient_id',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-
-    ShoppingList.findById(req.params.id, { where: { user_id: req.user.id }, include: [{ ...modelOptions.ingredients, where: { id: req.params.ingredient_id, ingredietable: 'ShoppingList' } }] })
+    ShoppingList.findById(req.params.id, {
+      where: { user_id: req.user.id },
+      include: [
+        {
+          ...modelOptions.ingredients,
+          where: { id: req.params.ingredient_id, ingredietable: 'ShoppingList' }
+        }
+      ]
+    })
       .then(shoppinglist => {
         // Delete the ingredient
         shoppinglist.ingredients[0].destroy().then(ingredient => {
           res.json({ success: true });
         });
       })
-      .catch(err => res.status(404).json({ error: 'Failed to remove Ingredient from shopping list' }));
+      .catch(err =>
+        res
+          .status(404)
+          .json({ error: 'Failed to remove Ingredient from shopping list' })
+      );
   }
 );
 
