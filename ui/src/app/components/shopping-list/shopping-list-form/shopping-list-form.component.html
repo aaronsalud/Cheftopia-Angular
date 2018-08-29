@@ -13,8 +13,7 @@
       <div class="row">
         <div class="col">
           <label for="description">Description</label>
-          <input type="text" id="description" name="description" ngModel (ngModelChange)="generatePreview(form)" class="form-control"
-            required>
+          <textarea id="description" name="description" ngModel (ngModelChange)="generatePreview(form)" class="form-control" required></textarea>
         </div>
       </div>
       <input type="hidden" id="ingredients" name="ingredients" ngModel>
