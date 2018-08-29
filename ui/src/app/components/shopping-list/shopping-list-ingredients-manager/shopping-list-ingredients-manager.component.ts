@@ -5,11 +5,11 @@ import { NgForm } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-shopping-edit',
-  templateUrl: './shopping-edit.component.html',
-  styleUrls: ['./shopping-edit.component.css']
+  selector: 'app-shopping-list-ingredients-manager',
+  templateUrl: './shopping-list-ingredients-manager.component.html',
+  styleUrls: ['./shopping-list-ingredients-manager.component.css']
 })
-export class ShoppingEditComponent implements OnInit, OnDestroy {
+export class ShoppingListIngredientsManagerComponent implements OnInit, OnDestroy {
   @ViewChild('form')
   shoppingListForm: NgForm;
   private ingredientEditSubscription: Subscription;
@@ -17,7 +17,7 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
   editedItem: Ingredient;
   editMode = false;
 
-  constructor(private shoppingListService: ShoppingListService) {}
+  constructor(private shoppingListService: ShoppingListService) { }
 
   // saveItem(form: NgForm) {
   //   const { value } = form;
