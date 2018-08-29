@@ -87,7 +87,7 @@ export class ShoppingListService {
   }
 
   editShoppingList(id, postData) {
-    return this.http.post(`/api/shoppinglist/${id}`, postData);
+    return this.http.put(`/api/shoppinglist/${id}`, postData);
   }
 
   addIngredient(ingredient: Ingredient) {
