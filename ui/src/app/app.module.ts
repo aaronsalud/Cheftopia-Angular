@@ -18,7 +18,6 @@ import { RecipeDetailComponent } from './components/recipes/recipe-detail/recipe
 import { RecipeFormComponent } from './components/recipes/recipe-form/recipe-form.component';
 import { RecipeItemComponent } from './components/recipes/recipe-list/recipe-item/recipe-item.component';
 import { ShoppingListComponent } from './components/shopping-list/shopping-list.component';
-import { ShoppingEditComponent } from './components/shopping-list/shopping-edit/shopping-edit.component';
 import { ShoppingListService } from './components/shopping-list/shopping-list.service';
 import { RecipeService } from './components/recipes/recipe.service';
 import { LoginComponent } from './components/auth/login/login.component';
@@ -29,6 +28,7 @@ import { AuthService } from './components/auth/auth.service';
 import { ShoppingListItemComponent } from './components/shopping-list/shopping-list-item/shopping-list-item.component';
 import { ShoppingListItemsComponent } from './components/shopping-list/shopping-list-items/shopping-list-items.component';
 import { ShoppingListFormComponent } from './components/shopping-list/shopping-list-form/shopping-list-form.component';
+import { ShoppingListIngredientsManagerComponent } from './components/shopping-list/shopping-list-ingredients-manager/shopping-list-ingredients-manager.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +40,7 @@ import { ShoppingListFormComponent } from './components/shopping-list/shopping-l
     RecipeItemComponent,
     RecipeFormComponent,
     ShoppingListComponent,
-    ShoppingEditComponent,
+    ShoppingListIngredientsManagerComponent,
     LoginComponent,
     SignupComponent,
     LandingComponent,
