@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ShoppingList } from '../shopping-list.model';
 import { Ingredient } from '../../shared/ingredient.model';
@@ -10,12 +10,18 @@ import { ShoppingListService } from '../shopping-list.service';
   templateUrl: './shopping-list-form.component.html',
   styleUrls: ['./shopping-list-form.component.css']
 })
-
 export class ShoppingListFormComponent implements OnInit {
+  @ViewChild('form')
+  shoppingListForm: NgForm;
+  name: string;
+  description: string;
   editMode: boolean = false;
-  shoppingListPreview: ShoppingList
+  shoppingListPreview: ShoppingList;
 
-  constructor(private route: ActivatedRoute, private shoppingListService: ShoppingListService) { }
+  constructor(
+    private route: ActivatedRoute,
+    private shoppingListService: ShoppingListService
+  ) {}
 
   saveItem(form: NgForm) {
     const { value } = form;
@@ -24,21 +30,37 @@ export class ShoppingListFormComponent implements OnInit {
   }
 
   generatePreview(form: NgForm) {
-    const { name, description } = form.value;
-    const ingredients: Ingredient[] = [];
+    const { name, description, ingredients } = form.value;
+    const shoppingListIngredients: Ingredient[] = ingredients;
     this.shoppingListPreview = null;
 
     if (name.length > 0 || description.length > 0) {
-      this.shoppingListPreview = new ShoppingList(0, name, description, false, ingredients);
+      this.shoppingListPreview = new ShoppingList(
+        0,
+        name,
+        description,
+        false,
+        shoppingListIngredients
+      );
     }
   }
 
   ngOnInit() {
+    // Check for Id in param and switch to edit mode
     const shoppingListId: number = +this.route.snapshot.paramMap.get('id');
     if (shoppingListId) {
-      const shoppinglist = this.shoppingListService.getShoppingListById(shoppingListId);
-
+      this.shoppingListService.getShoppingListById(shoppingListId).subscribe(
+        (shoppinglist: any) => {
+          this.shoppingListForm.setValue({
+            name: shoppinglist.name,
+            description: shoppinglist.description,
+            ingredients: shoppinglist.ingredients
+          });
+          this.editMode = true;
+          this.generatePreview(this.shoppingListForm);
+        },
+        err => console.log(err)
+      );
     }
   }
-
 }
