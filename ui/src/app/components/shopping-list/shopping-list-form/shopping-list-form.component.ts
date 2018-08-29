@@ -31,7 +31,7 @@ export class ShoppingListFormComponent implements OnInit {
     if (!this.editMode) {
       this.shoppingListService.createShoppingList(postData).subscribe(
         () => {
-          this.router.navigate(['../', { relativeTo: this.route }]);
+          this.router.navigate(['shopping-list']);
         },
         err => console.log(err)
       );
@@ -39,7 +39,7 @@ export class ShoppingListFormComponent implements OnInit {
       const id = +this.route.snapshot.paramMap.get('id');
       this.shoppingListService.editShoppingList(id, postData).subscribe(
         () => {
-          this.router.navigate(['../', { relativeTo: this.route }]);
+          this.router.navigate(['shopping-list']);
         },
         err => console.log(err)
       );
