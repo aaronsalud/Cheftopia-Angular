@@ -91,7 +91,16 @@ export class ShoppingListService {
   }
 
   deleteShoppingList(id) {
-    return this.http.delete(`/api/shoppinglist/${id}`);
+    this.http.delete(`/api/shoppinglist/${id}`).subscribe(
+      () => {
+        const index = this.shopping_lists.findIndex(
+          shoppinglist => shoppinglist.id === id
+        );
+        this.shopping_lists.splice(index, 1);
+        this.shoppinglistsUpdated.next(this.shopping_lists.slice());
+      },
+      err => console.log(err)
+    );
   }
 
   addIngredient(ingredient: Ingredient) {
