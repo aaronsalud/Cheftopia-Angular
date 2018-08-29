@@ -90,6 +90,10 @@ export class ShoppingListService {
     return this.http.put(`/api/shoppinglist/${id}`, postData);
   }
 
+  deleteShoppingList(id) {
+    return this.http.delete(`/api/shoppinglist/${id}`);
+  }
+
   addIngredient(ingredient: Ingredient) {
     this.ingredients.push(ingredient);
     this.ingredientsChanged.next(this.ingredients.slice());
