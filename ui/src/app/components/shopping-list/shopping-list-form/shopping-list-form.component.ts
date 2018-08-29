@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ShoppingList } from '../shopping-list.model';
 import { Ingredient } from '../../shared/ingredient.model';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ShoppingListService } from '../shopping-list.service';
 
 @Component({
@@ -19,14 +19,23 @@ export class ShoppingListFormComponent implements OnInit {
   shoppingListPreview: ShoppingList;
 
   constructor(
+    private router: Router,
     private route: ActivatedRoute,
     private shoppingListService: ShoppingListService
   ) {}
 
   saveItem(form: NgForm) {
     const { value } = form;
+    const postData = { name: value.name, description: value.description };
 
-    console.log(value);
+    if (!this.editMode) {
+      this.shoppingListService.createShoppingList(postData).subscribe(
+        () => {
+          this.router.navigate(['../', { relativeTo: this.route }]);
+        },
+        err => console.log(err)
+      );
+    }
   }
 
   generatePreview(form: NgForm) {
