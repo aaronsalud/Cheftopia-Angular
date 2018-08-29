@@ -9,6 +9,7 @@ import { SignupComponent } from '../components/auth/signup/signup.component';
 import { AccessGuard } from '../components/auth/guards/access.guard';
 import { ShoppingListItemsComponent } from '../components/shopping-list/shopping-list-items/shopping-list-items.component';
 import { ShoppingListFormComponent } from '../components/shopping-list/shopping-list-form/shopping-list-form.component';
+import { ShoppingListIngredientsManagerComponent } from '../components/shopping-list/shopping-list-ingredients-manager/shopping-list-ingredients-manager.component';
 export const appRoutes: Routes = [
   {
     path: 'recipes',
@@ -27,7 +28,8 @@ export const appRoutes: Routes = [
     children: [
       { path: '', component: ShoppingListItemsComponent },
       { path: 'new', component: ShoppingListFormComponent },
-      { path: ':id', component: ShoppingListFormComponent }
+      { path: ':id', component: ShoppingListFormComponent },
+      { path: ':id/ingredients', component: ShoppingListIngredientsManagerComponent }
     ],
     canActivate: [AccessGuard]
   },
