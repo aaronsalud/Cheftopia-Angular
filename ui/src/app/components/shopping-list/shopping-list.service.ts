@@ -112,8 +112,9 @@ export class ShoppingListService {
     );
   }
 
-  // deleteIngredientByIndex(index: number) {
-  //   this.ingredients.splice(index, 1);
-  //   this.ingredientsChanged.next(this.ingredients.slice());
-  // }
+  deleteIngredient(shoppinglistId, ingredientId) {
+    return this.http.delete(
+      `/api/shoppinglist/${shoppinglistId}/ingredient/${ingredientId}`
+    );
+  }
 }
