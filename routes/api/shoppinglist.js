@@ -267,7 +267,10 @@ router.delete(
       include: [
         {
           ...modelOptions.ingredients,
-          where: { id: req.params.ingredient_id, ingredietable: 'ShoppingList' }
+          where: {
+            id: req.params.ingredient_id,
+            ingredientable: 'ShoppingList'
+          }
         }
       ]
     })
