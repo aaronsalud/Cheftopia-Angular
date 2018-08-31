@@ -5,7 +5,7 @@
     <button class="btn btn-light dropdown-toggle" type="button" ngbDropdownToggle>Manage Shopping List</button>
     <div class="dropdown-menu" ngbDropdownMenu>
       <span class="dropdown-item" [routerLink]="[shoppinglist.id]">Edit Label</span>
-      <span class="dropdown-item"> Edit Ingredients</span>
+      <span class="dropdown-item" [routerLink]="[shoppinglist.id + '/ingredients']"> Edit Ingredients</span>
       <span class="dropdown-item" (click)="deleteItem(shoppinglist.id)">Delete</span>
     </div>
   </div>
