@@ -15,7 +15,7 @@ export class RecipeService {
     private shoppingListService: ShoppingListService,
     private http: HttpClient,
     private router: Router
-  ) { }
+  ) {}
 
   private recipes: Recipe[];
 
@@ -84,7 +84,6 @@ export class RecipeService {
     );
   }
 
-
   // Update Recipe Method
   editRecipe(id: number, recipe: Recipe) {
     this.http.put(`/api/recipe/${id}`, recipe).subscribe(
@@ -118,7 +117,7 @@ export class RecipeService {
     );
   }
 
-  addIngredientsToShoppingList(ingredients: Ingredient[]) {
-    this.shoppingListService.addIngredients(ingredients);
-  }
+  // addIngredientsToShoppingList(ingredients: Ingredient[]) {
+  //   this.shoppingListService.addIngredients(ingredients);
+  // }
 }
