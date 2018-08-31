@@ -12,11 +12,6 @@ export class ShoppingListService {
   ingredientEdit = new Subject<number>();
   shopping_lists: ShoppingList[];
 
-  ingredients: Ingredient[] = [
-    new Ingredient(1, 'Apples', 5),
-    new Ingredient(2, 'Tomatoes', 10)
-  ];
-
   constructor(private router: Router, private http: HttpClient) {}
 
   private generateIngredient(ingredient) {
@@ -103,32 +98,39 @@ export class ShoppingListService {
     );
   }
 
-  addIngredient(ingredient: Ingredient) {
-    this.ingredients.push(ingredient);
-    this.ingredientsChanged.next(this.ingredients.slice());
+  createIngredient(shoppinglistId, postData) {
+    return this.http.post(
+      `/api/shoppinglist/${shoppinglistId}/ingredient`,
+      postData
+    );
   }
 
-  addIngredients(ingredients: Ingredient[]) {
-    this.ingredients.push(...ingredients);
-    this.router.navigate(['/shopping-list']);
-    this.ingredientsChanged.next(this.ingredients.slice());
-  }
+  // addIngredient(ingredient: Ingredient) {
+  //   this.ingredients.push(ingredient);
+  //   this.ingredientsChanged.next(this.ingredients.slice());
+  // }
 
-  getIngredients() {
-    return this.ingredients.slice();
-  }
+  // addIngredients(ingredients: Ingredient[]) {
+  //   this.ingredients.push(...ingredients);
+  //   this.router.navigate(['/shopping-list']);
+  //   this.ingredientsChanged.next(this.ingredients.slice());
+  // }
 
-  getIngredientByIndex(index: number) {
-    return this.ingredients[index];
-  }
+  // getIngredients() {
+  //   return this.ingredients.slice();
+  // }
 
-  editIngredientByIndex(index: number, newIngredient: Ingredient) {
-    this.ingredients[index] = newIngredient;
-    this.ingredientsChanged.next(this.ingredients.slice());
-  }
+  // getIngredientByIndex(index: number) {
+  //   return this.ingredients[index];
+  // }
 
-  deleteIngredientByIndex(index: number) {
-    this.ingredients.splice(index, 1);
-    this.ingredientsChanged.next(this.ingredients.slice());
-  }
+  // editIngredientByIndex(index: number, newIngredient: Ingredient) {
+  //   this.ingredients[index] = newIngredient;
+  //   this.ingredientsChanged.next(this.ingredients.slice());
+  // }
+
+  // deleteIngredientByIndex(index: number) {
+  //   this.ingredients.splice(index, 1);
+  //   this.ingredientsChanged.next(this.ingredients.slice());
+  // }
 }
