@@ -1,0 +1,12 @@
+.shopping-list-ingredients-manager .header {
+  padding: 20px 15px;
+  margin-bottom: 15px;
+  width: 550px;
+  background-color: rgba(250, 250, 250);
+}
+
+.shopping-list-ingredients-manager .ingredient-form {
+  width: 550px;
+  padding: 20px 0;
+  background-color: rgba(250, 250, 250);
+}
