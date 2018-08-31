@@ -247,7 +247,7 @@ router.put(
         return updatedIngedient;
       })
       .then(updatedIngredient => {
-        ShoppingList.findById(updatedIngredient.id, {
+        ShoppingList.findById(req.params.id, {
           include: [modelOptions.ingredients]
         }).then(shoppinglist => res.json(shoppinglist));
       })
