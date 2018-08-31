@@ -18,6 +18,8 @@
     </div>
     <div class="row">
       <div class="card ingredient-form col">
+        <h3 class="ml-3 mb-3" *ngIf="!editMode">Add a new Ingredient</h3>
+        <h3 class="ml-3 mb-3" *ngIf="editMode">Edit this Ingredient</h3>
         <form (ngSubmit)="saveItem(form)" #form="ngForm">
           <div class="form-group col">
             <label for="name">Name</label>
