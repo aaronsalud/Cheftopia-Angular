@@ -14,10 +14,10 @@ export class ShoppingListIngredientsManagerComponent
   implements OnInit, OnDestroy {
   @ViewChild('form')
   ingredientForm: NgForm;
-  private ingredientEditSubscription: Subscription;
   editedItemIndex: number;
   editedItem: Ingredient;
   ingredients: Ingredient[] = [];
+  shoppingListId: number;
   shoppingListName: string;
   shoppingListDescription: string;
 
@@ -29,30 +29,40 @@ export class ShoppingListIngredientsManagerComponent
     private route: ActivatedRoute
   ) {}
 
-  // saveItem(form: NgForm) {
-  //   const { value } = form;
-  //   // const newIngredient = new Ingredient(value.name, value.amount);
-  //   if (this.editMode) {
-  //     this.shoppingListService.editIngredientByIndex(
-  //       this.editedItemIndex,
-  //       // newIngredient
-  //     );
-  //   } else if (value && value.name && value.amount) {
-  //     // this.shoppingListService.addIngredient(newIngredient);
-  //   }
-  //   this.resetForm();
-  // }
+  saveItem(form: NgForm) {
+    const { value } = form;
 
-  deleteItem() {
-    if (this.editedItemIndex >= 0) {
-      this.shoppingListService.deleteIngredientByIndex(this.editedItemIndex);
-      this.resetForm();
+    if (this.editMode) {
+      // this.shoppingListService.editIngredientByIndex(
+      //   this.editedItemIndex,
+      //   // newIngredient
+      // );
+    } else if (value && value.name && value.amount) {
+      this.shoppingListService
+        .createIngredient(this.shoppingListId, value)
+        .subscribe(
+          (data: any) => {
+            const { ingredients } = data;
+            if (ingredients) {
+              this.ingredients = ingredients;
+            }
+          },
+          err => console.log(err)
+        );
     }
+    this.resetForm();
   }
+
+  // deleteItem() {
+  //   if (this.editedItemIndex >= 0) {
+  //     this.shoppingListService.deleteIngredientByIndex(this.editedItemIndex);
+  //     this.resetForm();
+  //   }
+  // }
 
   resetForm() {
     this.editMode = false;
-    // this.shoppingListForm.reset();
+    this.ingredientForm.reset();
   }
 
   ngOnInit() {
@@ -63,6 +73,7 @@ export class ShoppingListIngredientsManagerComponent
         (shoppinglist: any) => {
           if (shoppinglist) {
             // Extract shopping list name and description
+            this.shoppingListId = shoppinglist.id;
             this.shoppingListName = shoppinglist.name;
             this.shoppingListDescription = shoppinglist.description;
             const { ingredients } = shoppinglist;
