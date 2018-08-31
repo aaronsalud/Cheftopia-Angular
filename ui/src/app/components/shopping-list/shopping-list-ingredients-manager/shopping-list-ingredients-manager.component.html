@@ -40,6 +40,7 @@
   <div class="col">
     <ul class="list-group">
       <li class="list-group-item"><b>Ingredients:</b></li>
+      <li class="list-group-item" *ngIf="ingredients && ingredients.length == 0"><i>No Ingredients Yet</i></li>
       <li class="list-group-item" *ngFor="let ingredient of ingredients">{{ ingredient.amount}} {{ingredient.name}}</li>
     </ul>
   </div>
