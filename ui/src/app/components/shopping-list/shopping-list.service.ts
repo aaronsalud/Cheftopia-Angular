@@ -105,29 +105,12 @@ export class ShoppingListService {
     );
   }
 
-  // addIngredient(ingredient: Ingredient) {
-  //   this.ingredients.push(ingredient);
-  //   this.ingredientsChanged.next(this.ingredients.slice());
-  // }
-
-  // addIngredients(ingredients: Ingredient[]) {
-  //   this.ingredients.push(...ingredients);
-  //   this.router.navigate(['/shopping-list']);
-  //   this.ingredientsChanged.next(this.ingredients.slice());
-  // }
-
-  // getIngredients() {
-  //   return this.ingredients.slice();
-  // }
-
-  // getIngredientByIndex(index: number) {
-  //   return this.ingredients[index];
-  // }
-
-  // editIngredientByIndex(index: number, newIngredient: Ingredient) {
-  //   this.ingredients[index] = newIngredient;
-  //   this.ingredientsChanged.next(this.ingredients.slice());
-  // }
+  editIngredient(shoppinglistId, ingredientId, postData) {
+    return this.http.put(
+      `/api/shoppinglist/${shoppinglistId}/ingredient/${ingredientId}`,
+      postData
+    );
+  }
 
   // deleteIngredientByIndex(index: number) {
   //   this.ingredients.splice(index, 1);
