@@ -30,7 +30,7 @@ export class ShoppingListIngredientsManagerComponent
 
   saveItem(form: NgForm) {
     const { value } = form;
-
+    // Edit Ingredient
     if (this.editMode) {
       this.shoppingListService
         .editIngredient(
@@ -43,11 +43,14 @@ export class ShoppingListIngredientsManagerComponent
             const { ingredients } = data;
             if (ingredients) {
               this.ingredients = ingredients;
+              this.resetForm();
             }
           },
           err => console.log(err)
         );
-    } else if (value && value.name && value.amount) {
+    }
+    // Create Ingredient
+    else if (value && value.name && value.amount) {
       this.shoppingListService
         .createIngredient(this.shoppingListId, value)
         .subscribe(
@@ -55,20 +58,28 @@ export class ShoppingListIngredientsManagerComponent
             const { ingredients } = data;
             if (ingredients) {
               this.ingredients = ingredients;
+              this.resetForm();
             }
           },
           err => console.log(err)
         );
     }
-    this.resetForm();
   }
 
-  // deleteItem() {
-  //   if (this.editedItemIndex >= 0) {
-  //     this.shoppingListService.deleteIngredientByIndex(this.editedItemIndex);
-  //     this.resetForm();
-  //   }
-  // }
+  deleteItem() {
+    this.shoppingListService
+      .deleteIngredient(this.shoppingListId, this.ingredientBeingEdited.id)
+      .subscribe(
+        data => {
+          const index = this.ingredients.findIndex(
+            ingredient => ingredient.id === this.ingredientBeingEdited.id
+          );
+          this.ingredients.splice(index, 1);
+          this.resetForm();
+        },
+        err => console.log(err)
+      );
+  }
 
   resetForm() {
     this.editMode = false;
