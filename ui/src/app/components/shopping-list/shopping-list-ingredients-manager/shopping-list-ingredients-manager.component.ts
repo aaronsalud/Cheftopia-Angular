@@ -14,8 +14,7 @@ export class ShoppingListIngredientsManagerComponent
   implements OnInit, OnDestroy {
   @ViewChild('form')
   ingredientForm: NgForm;
-  editedItemIndex: number;
-  editedItem: Ingredient;
+  ingredientBeingEdited: Ingredient;
   ingredients: Ingredient[] = [];
   shoppingListId: number;
   shoppingListName: string;
@@ -33,10 +32,21 @@ export class ShoppingListIngredientsManagerComponent
     const { value } = form;
 
     if (this.editMode) {
-      // this.shoppingListService.editIngredientByIndex(
-      //   this.editedItemIndex,
-      //   // newIngredient
-      // );
+      this.shoppingListService
+        .editIngredient(
+          this.shoppingListId,
+          this.ingredientBeingEdited.id,
+          value
+        )
+        .subscribe(
+          (data: any) => {
+            const { ingredients } = data;
+            if (ingredients) {
+              this.ingredients = ingredients;
+            }
+          },
+          err => console.log(err)
+        );
     } else if (value && value.name && value.amount) {
       this.shoppingListService
         .createIngredient(this.shoppingListId, value)
@@ -62,7 +72,17 @@ export class ShoppingListIngredientsManagerComponent
 
   resetForm() {
     this.editMode = false;
+    this.ingredientBeingEdited = null;
     this.ingredientForm.reset();
+  }
+
+  toggleIngredientEdit(ingredient) {
+    this.ingredientBeingEdited = ingredient;
+    this.editMode = true;
+    this.ingredientForm.setValue({
+      name: ingredient.name,
+      amount: ingredient.amount
+    });
   }
 
   ngOnInit() {
