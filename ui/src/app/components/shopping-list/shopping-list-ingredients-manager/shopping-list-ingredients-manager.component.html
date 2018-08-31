@@ -1,25 +1,46 @@
-<div class="row my-3">
-  <div class="col-12">
-    <form (ngSubmit)="saveItem(form)" #form="ngForm">
-      <div class="row">
-        <div class="col-5">
-          <label for="name">Name</label>
-          <input type="text" id="name" name="name" ngModel class="form-control" required>
+<div class="shopping-list-ingredients-manager row my-3">
+  <div class="col">
+    <div class="row">
+      <div class="header card col">
+        <h3>Shopping List info:</h3>
+        <div class="row" *ngIf="shoppingListName">
+          <div class="col-3">Name:</div>
+          <div class="col">{{ shoppingListName }}</div>
         </div>
-        <div class="col-2">
-          <label for="amount">Amount</label>
-          <input type="number" id="amount" name="amount" ngModel class="form-control" pattern="^[1-9]+[0-9]*$" required>
-        </div>
-      </div>
-      <div class="row mt-3">
-        <div class="col-12">
-          <button class="btn btn-success mr-1" type="submit" [disabled]="!form.valid">{{ editMode ? 'Save Changes' : 'Add
-            Item'}}
-          </button>
-          <button *ngIf="editMode" class="btn btn-danger mr-1" type="button" (click)="deleteItem()">Delete</button>
-          <button class="btn btn-primary mr-1" type="button" (click)="resetForm()">Clear</button>
+        <div class="row" *ngIf="shoppingListDescription">
+          <div class="col-3">Description:</div>
+          <div class="col">{{ shoppingListDescription }}</div>
         </div>
       </div>
-    </form>
+    </div>
+    <div class="row">
+      <div class="card ingredient-form col">
+        <form (ngSubmit)="saveItem(form)" #form="ngForm">
+          <div class="form-group col">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" ngModel class="form-control" required>
+          </div>
+          <div class="form-group col-5">
+            <label for="amount">Amount</label>
+            <input type="number" id="amount" name="amount" ngModel class="form-control" pattern="^[1-9]+[0-9]*$" required>
+          </div>
+          <div class="row mt-3 ml-1">
+            <div class="col-12">
+              <button class="btn btn-success mr-1" type="submit" [disabled]="!form.valid">{{ editMode ? 'Save Changes' :
+                'Add Item'}}
+              </button>
+              <button *ngIf="editMode" class="btn btn-danger mr-1" type="button" (click)="deleteItem()">Delete</button>
+              <button class="btn btn-primary mr-1" type="button" (click)="resetForm()">Clear</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <ul class="list-group">
+      <li class="list-group-item"><b>Ingredients:</b></li>
+      <li class="list-group-item" *ngFor="let ingredient of ingredients">{{ ingredient.amount}} {{ingredient.name}}</li>
+    </ul>
   </div>
 </div>
