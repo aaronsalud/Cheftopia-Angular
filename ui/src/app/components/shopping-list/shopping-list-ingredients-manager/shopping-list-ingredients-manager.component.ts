@@ -3,21 +3,31 @@ import { Ingredient } from '../../shared/ingredient.model';
 import { ShoppingListService } from '../shopping-list.service';
 import { NgForm } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-shopping-list-ingredients-manager',
   templateUrl: './shopping-list-ingredients-manager.component.html',
   styleUrls: ['./shopping-list-ingredients-manager.component.css']
 })
-export class ShoppingListIngredientsManagerComponent implements OnInit, OnDestroy {
+export class ShoppingListIngredientsManagerComponent
+  implements OnInit, OnDestroy {
   @ViewChild('form')
-  shoppingListForm: NgForm;
+  ingredientForm: NgForm;
   private ingredientEditSubscription: Subscription;
   editedItemIndex: number;
   editedItem: Ingredient;
+  ingredients: Ingredient[] = [];
+  shoppingListName: string;
+  shoppingListDescription: string;
+
   editMode = false;
 
-  constructor(private shoppingListService: ShoppingListService) { }
+  constructor(
+    private shoppingListService: ShoppingListService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
   // saveItem(form: NgForm) {
   //   const { value } = form;
@@ -42,24 +52,37 @@ export class ShoppingListIngredientsManagerComponent implements OnInit, OnDestro
 
   resetForm() {
     this.editMode = false;
-    this.shoppingListForm.reset();
+    // this.shoppingListForm.reset();
   }
 
   ngOnInit() {
-    this.ingredientEditSubscription = this.shoppingListService.ingredientEdit.subscribe(
-      (index: number) => {
-        this.editedItemIndex = index;
-        this.editMode = true;
-        this.editedItem = this.shoppingListService.getIngredientByIndex(index);
-        this.shoppingListForm.setValue({
-          name: this.editedItem.name,
-          amount: this.editedItem.amount
-        });
-      }
-    );
+    // Check for Id in param and switch to edit mode
+    const shoppingListId: number = +this.route.snapshot.paramMap.get('id');
+    if (shoppingListId) {
+      this.shoppingListService.getShoppingListById(shoppingListId).subscribe(
+        (shoppinglist: any) => {
+          if (shoppinglist) {
+            // Extract shopping list name and description
+            this.shoppingListName = shoppinglist.name;
+            this.shoppingListDescription = shoppinglist.description;
+            const { ingredients } = shoppinglist;
+            // Extract ingredients data
+            if (ingredients && ingredients.length > 0) {
+              shoppinglist.ingredients.forEach(ingredient => {
+                const { id, name, amount } = ingredient;
+                if (id && name && amount) {
+                  this.ingredients.push(new Ingredient(id, name, amount));
+                }
+              });
+            }
+          }
+        },
+        err => console.log(err)
+      );
+    }
   }
 
   ngOnDestroy() {
-    this.ingredientEditSubscription.unsubscribe();
+    // this.ingredientEditSubscription.unsubscribe();
   }
 }
