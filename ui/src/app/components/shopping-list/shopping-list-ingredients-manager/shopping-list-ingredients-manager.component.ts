@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Ingredient } from '../../shared/ingredient.model';
 import { ShoppingListService } from '../shopping-list.service';
 import { NgForm } from '@angular/forms';
-import { Subscription } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -11,7 +10,7 @@ import { Router, ActivatedRoute } from '@angular/router';
   styleUrls: ['./shopping-list-ingredients-manager.component.css']
 })
 export class ShoppingListIngredientsManagerComponent
-  implements OnInit, OnDestroy {
+  implements OnInit {
   @ViewChild('form')
   ingredientForm: NgForm;
   ingredientBeingEdited: Ingredient;
@@ -24,7 +23,6 @@ export class ShoppingListIngredientsManagerComponent
 
   constructor(
     private shoppingListService: ShoppingListService,
-    private router: Router,
     private route: ActivatedRoute
   ) {}
 
@@ -122,9 +120,5 @@ export class ShoppingListIngredientsManagerComponent
         err => console.log(err)
       );
     }
-  }
-
-  ngOnDestroy() {
-    // this.ingredientEditSubscription.unsubscribe();
   }
 }
