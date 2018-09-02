@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { User } from '../auth/user.model';
 import { Store } from '@ngxs/store';
+import { LogoutUser } from '../../store/actions/auth.actions';
 
 @Component({
   selector: 'app-header',
@@ -12,6 +13,9 @@ export class HeaderComponent implements OnInit {
   currentUser: User;
   isLoggedIn: boolean;
 
+  // Collapse all menu dropdowns
+  isMobileNavCollapsed = true;
+
   constructor(private authService: AuthService, private store: Store) {
     this.store
       .select(state => state.auth)
@@ -20,12 +24,9 @@ export class HeaderComponent implements OnInit {
         this.currentUser = user;
       });
   }
-  // Collapse all menu dropdowns
-  isMobileNavCollapsed = true;
 
   logout() {
-    this.isLoggedIn = false;
-    this.authService.logout();
+    this.store.dispatch(new LogoutUser(this.authService));
     this.isMobileNavCollapsed = false;
   }
 
