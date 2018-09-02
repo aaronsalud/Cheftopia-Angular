@@ -4,7 +4,6 @@ import { AuthService } from '../auth.service';
 import { Store } from '@ngxs/store';
 import { RegisterUser } from '../../../store/actions/auth.actions';
 import { Router } from '@angular/router';
-import { ClearErrors } from '../../../store/actions/errors.actions';
 
 @Component({
   selector: 'app-signup',
