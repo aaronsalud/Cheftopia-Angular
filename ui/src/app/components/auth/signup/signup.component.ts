@@ -48,8 +48,6 @@ export class SignupComponent implements OnInit {
       password: new FormControl(password, Validators.required),
       password2: new FormControl(password2, Validators.required)
     });
-    // Reset errors in the state
-    this.store.dispatch(new ClearErrors());
   }
 
   ngOnInit() {
