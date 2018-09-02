@@ -18,7 +18,7 @@ export class AuthService {
   ) {}
 
   login(data) {
-    return this.http.post('/api/users/login', data).subscribe(
+    this.http.post('/api/users/login', data).subscribe(
       data => {
         this.setAuthToken(data['token']);
         this.router.navigate(['/recipes']);
@@ -29,12 +29,7 @@ export class AuthService {
   }
 
   signup(data) {
-    return this.http.post('/api/users/register', data).subscribe(
-      data => {
-        this.router.navigate(['/recipes']);
-      },
-      err => this.signUpErrors.next(err)
-    );
+    return this.http.post('/api/users/register', data);
   }
 
   private setAuthToken(token) {
