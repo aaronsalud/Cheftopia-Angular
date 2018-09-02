@@ -1,5 +1,5 @@
 import { State, Action } from '@ngxs/store';
-import { SetCurrentUser } from '../actions/auth.actions';
+import { SetCurrentUser, LogoutUser } from '../actions/auth.actions';
 
 @State({
   name: 'auth',
@@ -13,6 +13,14 @@ export class AuthState {
   setCurrentUser({ setState }: any, { payload }: SetCurrentUser) {
     setState({
       ...payload
+    });
+  }
+
+  @Action(LogoutUser)
+  logoutUser({ patchState }: any) {
+    patchState({
+      isAuthenticated: false,
+      user: {}
     });
   }
 }
