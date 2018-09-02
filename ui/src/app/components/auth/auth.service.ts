@@ -18,21 +18,14 @@ export class AuthService {
   ) {}
 
   login(data) {
-    this.http.post('/api/users/login', data).subscribe(
-      data => {
-        this.setAuthToken(data['token']);
-        this.router.navigate(['/recipes']);
-        this.loggedInSuccessfully.next();
-      },
-      err => this.loginErrors.next(err)
-    );
+    return this.http.post('/api/users/login', data);
   }
 
   signup(data) {
     return this.http.post('/api/users/register', data);
   }
 
-  private setAuthToken(token) {
+  setAuthToken(token) {
     localStorage.setItem('jwtToken', token);
   }
 
