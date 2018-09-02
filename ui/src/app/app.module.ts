@@ -33,6 +33,7 @@ import { ShoppingListItemsComponent } from './components/shopping-list/shopping-
 import { ShoppingListFormComponent } from './components/shopping-list/shopping-list-form/shopping-list-form.component';
 import { ShoppingListIngredientsManagerComponent } from './components/shopping-list/shopping-list-ingredients-manager/shopping-list-ingredients-manager.component';
 import { ErrorsState } from './store/states/errors.state';
+import { AuthState } from './store/states/auth.state';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,7 @@ import { ErrorsState } from './store/states/errors.state';
     FormsModule,
     ReactiveFormsModule,
     NgbModule.forRoot(),
-    NgxsModule.forRoot([ErrorsState]),
+    NgxsModule.forRoot([ErrorsState, AuthState]),
     NgxsReduxDevtoolsPluginModule.forRoot(),
     NgxsLoggerPluginModule.forRoot()
   ],
