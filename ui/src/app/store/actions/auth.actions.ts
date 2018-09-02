@@ -60,3 +60,11 @@ export class SetCurrentUser {
     };
   }
 }
+
+// Set Current User Action
+export class LogoutUser {
+  static readonly type = '[AUTH] Logout User';
+  constructor(private authService: AuthService) {
+    this.authService.logout();
+  }
+}
