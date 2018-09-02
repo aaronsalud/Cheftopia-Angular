@@ -27,7 +27,7 @@
                 </li>
                 <li class="nav-item dropdown" [hidden]="!isLoggedIn">
                     <div class="nav-link dropdown-toggle" role="button" aria-haspopup="true" aria-controls="mobile-nav" ngbDropdownToggle>
-                        <img *ngIf="currentUser" class="rounded-circle" [src]="currentUser.avatar" alt="" style="width:25px; margin-right:10px;"><span
+                        <img *ngIf="currentUser && currentUser.avatar" class="rounded-circle" [src]="currentUser.avatar" alt="" style="width:25px; margin-right:10px;"><span
                             style="display:inline-block; vertical-align:bottom;">{{currentUser ? currentUser.name : ''}}</span>
                     </div>
                     <div class="dropdown-menu" id="manage-nav" ngbDropdownMenu>
