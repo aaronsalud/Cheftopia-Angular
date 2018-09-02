@@ -2,21 +2,39 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { Subscription } from 'rxjs';
+import { Store } from '@ngxs/store';
+import { RegisterUser } from '../../../store/actions/auth.actions';
+import { Router } from '@angular/router';
+import { ClearErrors } from '../../../store/actions/errors.actions';
 
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css']
 })
-export class SignupComponent implements OnInit, OnDestroy {
+export class SignupComponent implements OnInit {
   signUpForm: FormGroup;
-  signUpErrorsSubscription: Subscription;
   errors;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private store: Store,
+    private router: Router
+  ) {
+    this.store
+      .select(state => state.errors.errors)
+      .subscribe(errors => (this.errors = errors));
+  }
 
   onSubmit() {
-    this.authService.signup(this.signUpForm.value);
+    this.store.dispatch(
+      new RegisterUser(
+        this.signUpForm.value,
+        this.authService,
+        this.store,
+        this.router
+      )
+    );
   }
 
   private initForm() {
@@ -31,17 +49,11 @@ export class SignupComponent implements OnInit, OnDestroy {
       password: new FormControl(password, Validators.required),
       password2: new FormControl(password2, Validators.required)
     });
+    // Reset errors in the state
+    this.store.dispatch(new ClearErrors());
   }
 
   ngOnInit() {
-    this.signUpErrorsSubscription = this.authService.signUpErrors.subscribe(
-      errors => (this.errors = errors)
-    );
-
     this.initForm();
-  }
-
-  ngOnDestroy() {
-    this.signUpErrorsSubscription.unsubscribe();
   }
 }
