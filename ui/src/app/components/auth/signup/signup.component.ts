@@ -1,7 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
-import { Subscription } from 'rxjs';
 import { Store } from '@ngxs/store';
 import { RegisterUser } from '../../../store/actions/auth.actions';
 import { Router } from '@angular/router';
@@ -22,7 +21,7 @@ export class SignupComponent implements OnInit {
     private router: Router
   ) {
     this.store
-      .select(state => state.errors.errors)
+      .select(state => state.errors)
       .subscribe(errors => (this.errors = errors));
   }
 
