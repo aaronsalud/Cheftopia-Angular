@@ -1,19 +1,25 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { User } from '../auth/user.model';
-import { Subscription } from 'rxjs';
+import { Store } from '@ngxs/store';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit, OnDestroy {
-  loggedInSuccessfullySubscription: Subscription;
+export class HeaderComponent implements OnInit {
   currentUser: User;
   isLoggedIn: boolean;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private store: Store) {
+    this.store
+      .select(state => state.auth)
+      .subscribe(({ isAuthenticated, user }) => {
+        this.isLoggedIn = isAuthenticated;
+        this.currentUser = user;
+      });
+  }
   // Collapse all menu dropdowns
   isMobileNavCollapsed = true;
 
@@ -23,25 +29,5 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.isMobileNavCollapsed = false;
   }
 
-  private setLoggedInState() {
-    this.currentUser = this.authService.getCurrentUser();
-    if (this.currentUser) {
-      this.isLoggedIn = true;
-    }
-  }
-
-  ngOnInit() {
-    // Subscribe to login events and set log in state
-    this.loggedInSuccessfullySubscription = this.authService.loggedInSuccessfully.subscribe(
-      () => {
-        this.setLoggedInState();
-      }
-    );
-    // Check for logged in state
-    this.setLoggedInState();
-  }
-
-  ngOnDestroy() {
-    this.loggedInSuccessfullySubscription.unsubscribe();
-  }
+  ngOnInit() {}
 }
