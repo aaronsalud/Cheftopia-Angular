@@ -13,6 +13,7 @@ import { ShoppingListService } from '../shopping-list.service';
 export class ShoppingListFormComponent implements OnInit {
   @ViewChild('form')
   shoppingListForm: NgForm;
+  id: number;
   name: string;
   description: string;
   editMode: boolean = false;
@@ -64,9 +65,9 @@ export class ShoppingListFormComponent implements OnInit {
 
   ngOnInit() {
     // Check for Id in param and switch to edit mode
-    const shoppingListId: number = +this.route.snapshot.paramMap.get('id');
-    if (shoppingListId) {
-      this.shoppingListService.getShoppingListById(shoppingListId).subscribe(
+    this.route.params.subscribe((params: Params) => {
+      this.id = +params['id'];
+      this.shoppingListService.getShoppingListById(this.id).subscribe(
         (shoppinglist: any) => {
           this.shoppingListForm.setValue({
             name: shoppinglist.name,
@@ -78,6 +79,6 @@ export class ShoppingListFormComponent implements OnInit {
         },
         err => console.log(err)
       );
-    }
+    });
   }
 }
