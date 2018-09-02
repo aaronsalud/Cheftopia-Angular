@@ -3,6 +3,9 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { NgxsModule } from '@ngxs/store';
+import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 
 // import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './components/auth/interceptors/auth.interceptor';
@@ -29,6 +32,7 @@ import { ShoppingListItemComponent } from './components/shopping-list/shopping-l
 import { ShoppingListItemsComponent } from './components/shopping-list/shopping-list-items/shopping-list-items.component';
 import { ShoppingListFormComponent } from './components/shopping-list/shopping-list-form/shopping-list-form.component';
 import { ShoppingListIngredientsManagerComponent } from './components/shopping-list/shopping-list-ingredients-manager/shopping-list-ingredients-manager.component';
+import { ErrorsState } from './store/states/errors.state';
 
 @NgModule({
   declarations: [
@@ -56,7 +60,10 @@ import { ShoppingListIngredientsManagerComponent } from './components/shopping-l
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    NgbModule.forRoot()
+    NgbModule.forRoot(),
+    NgxsModule.forRoot([ErrorsState]),
+    NgxsReduxDevtoolsPluginModule.forRoot(),
+    NgxsLoggerPluginModule.forRoot()
   ],
   providers: [
     ShoppingListService,
