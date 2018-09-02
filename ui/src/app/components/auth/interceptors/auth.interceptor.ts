@@ -7,10 +7,17 @@ import {
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from '../auth.service';
+import { Store } from '@ngxs/store';
+import { SetCurrentUser } from '../../../store/actions/auth.actions';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) { }
+  auth: any;
+  constructor(private authService: AuthService, private store: Store) {
+    this.store
+      .select(state => state.auth)
+      .subscribe(auth => (this.auth = auth));
+  }
   intercept(
     request: HttpRequest<any>,
     next: HttpHandler
@@ -19,6 +26,9 @@ export class AuthInterceptor implements HttpInterceptor {
     const authToken = this.authService.getAuthToken();
     const currentUser = this.authService.getCurrentUser();
     if (currentUser && authToken) {
+      if (this.auth && (!this.auth.isAuthenticated && !this.auth.user.name)) {
+        this.store.dispatch(new SetCurrentUser(true, currentUser));
+      }
       request = request.clone({
         headers: request.headers
           .set('Authorization', authToken)
