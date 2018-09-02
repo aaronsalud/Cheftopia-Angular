@@ -13,9 +13,7 @@ export class ErrorsState {
   }
 
   @Action(ClearErrors)
-  clearErrors({ patchState }: any) {
-    patchState({
-      errors: {}
-    });
+  clearErrors({ setState }: any) {
+    setState({});
   }
 }
