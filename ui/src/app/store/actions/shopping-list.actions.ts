@@ -9,9 +9,9 @@ export class GetShoppingLists {
   private shoppinglists: ShoppingList[] = [];
 
   constructor(
-    queryParam: string = null,
     private shoppinglistService: ShoppingListService,
-    private store: Store
+    private store: Store,
+    queryParam: any = null
   ) {
     this.store.dispatch(new ShoppingListLoading());
     this.shoppinglistService.getShoppingLists(queryParam).subscribe(
