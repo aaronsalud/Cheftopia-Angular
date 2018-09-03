@@ -35,6 +35,7 @@ import { ShoppingListIngredientsManagerComponent } from './components/shopping-l
 import { ErrorsState } from './store/states/errors.state';
 import { AuthState } from './store/states/auth.state';
 import { ShoppingListState } from './store/states/shopping-list.state';
+import { LoaderComponent } from './components/loader/loader.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { ShoppingListState } from './store/states/shopping-list.state';
     LayoutComponent,
     ShoppingListItemComponent,
     ShoppingListItemsComponent,
-    ShoppingListFormComponent
+    ShoppingListFormComponent,
+    LoaderComponent
   ],
   imports: [
     BrowserModule,
