@@ -32,12 +32,14 @@ export class ShoppingListItemsComponent implements OnInit {
 
   onArchiveFilterChange(event) {
     const queryParams = { archived: event };
-    this.shoppingListService.getShoppingLists(queryParams);
+    this.store.dispatch(
+      new GetShoppingLists(this.shoppingListService, this.store, queryParams)
+    );
   }
 
   ngOnInit() {
     this.store.dispatch(
-      new GetShoppingLists(null, this.shoppingListService, this.store)
+      new GetShoppingLists(this.shoppingListService, this.store)
     );
   }
 }
