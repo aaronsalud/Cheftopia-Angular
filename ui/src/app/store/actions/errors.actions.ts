@@ -1,6 +1,6 @@
 // Get Errors Action
-export class GetErrors {
-  static readonly type = '[ERRORS] Get Errors';
+export class SetErrors {
+  static readonly type = '[ERRORS] Set Errors';
 
   constructor(public payload: any) {}
 }
