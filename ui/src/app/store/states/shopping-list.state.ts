@@ -1,7 +1,6 @@
 import { State, Action, StateContext } from '@ngxs/store';
 import { ShoppingList } from '../../components/shopping-list/shopping-list.model';
 import {
-  GetShoppingLists,
   ShoppingListLoading,
   SetShoppingLists
 } from '../actions/shopping-list.actions';
