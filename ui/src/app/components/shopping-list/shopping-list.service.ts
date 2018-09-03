@@ -18,7 +18,7 @@ export class ShoppingListService {
     return new Ingredient(ingredient.id, ingredient.name, ingredient.amount);
   }
 
-  private generateIngredients(shoppinglistIngredients) {
+  generateIngredients(shoppinglistIngredients) {
     const ingredients = [];
     if (shoppinglistIngredients && shoppinglistIngredients.length > 0) {
       shoppinglistIngredients.forEach(ingredient =>
@@ -28,7 +28,12 @@ export class ShoppingListService {
     return ingredients;
   }
 
-  private generateShoppingList(shoppinglist, ingredients) {
+  generateShoppingList(shoppinglist) {
+    let ingredients = [];
+    if (shoppinglist.ingredients && shoppinglist.ingredients.length > 0) {
+      ingredients = this.generateIngredients(shoppinglist.ingredients);
+    }
+
     return new ShoppingList(
       shoppinglist.id,
       shoppinglist.name,
@@ -54,23 +59,7 @@ export class ShoppingListService {
 
   // Fetch Shopping Lists Method
   getShoppingLists(queryParams = null) {
-    this.http.get(this.composeQueryString(queryParams)).subscribe(
-      (shoppinglists: any) => {
-        this.shopping_lists = [];
-        shoppinglists.forEach((shoppinglist: any) => {
-          if (shoppinglist) {
-            const ingredients = this.generateIngredients(
-              shoppinglist.ingredients
-            );
-            this.shopping_lists.push(
-              this.generateShoppingList(shoppinglist, ingredients)
-            );
-          }
-        });
-        this.shoppinglistsUpdated.next(this.shopping_lists.slice());
-      },
-      err => console.log(err)
-    );
+    return this.http.get(this.composeQueryString(queryParams));
   }
 
   getShoppingListById(id: number) {
