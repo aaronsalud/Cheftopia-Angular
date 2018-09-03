@@ -1,7 +1,7 @@
 import { AuthService } from '../../components/auth/auth.service';
 import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
-import { GetErrors, ClearErrors } from './errors.actions';
+import { SetErrors, ClearErrors } from './errors.actions';
 import { User } from '../../components/auth/user.model';
 
 // Register User Action
@@ -19,7 +19,7 @@ export class RegisterUser {
       () => {
         this.router.navigate(['/login']);
       },
-      err => this.store.dispatch(new GetErrors(err))
+      err => this.store.dispatch(new SetErrors(err))
     );
   }
 }
@@ -44,7 +44,7 @@ export class LoginUser {
           new SetCurrentUser(true, this.authService.getCurrentUser())
         );
       },
-      err => this.store.dispatch(new GetErrors(err))
+      err => this.store.dispatch(new SetErrors(err))
     );
   }
 }
