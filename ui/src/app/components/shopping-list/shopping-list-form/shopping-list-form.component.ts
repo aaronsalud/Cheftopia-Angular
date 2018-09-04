@@ -1,9 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ShoppingList } from '../shopping-list.model';
 import { Ingredient } from '../../shared/ingredient.model';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { ShoppingListService } from '../shopping-list.service';
+import { Store } from '@ngxs/store';
+import { GetShoppingList } from '../../../store/actions/shopping-list.actions';
 
 @Component({
   selector: 'app-shopping-list-form',
@@ -14,16 +16,29 @@ export class ShoppingListFormComponent implements OnInit {
   @ViewChild('form')
   shoppingListForm: NgForm;
   id: number;
-  name: string;
-  description: string;
+  activeShoppingList: ShoppingList;
   editMode: boolean = false;
   shoppingListPreview: ShoppingList;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private shoppingListService: ShoppingListService
-  ) {}
+    private shoppingListService: ShoppingListService,
+    private store: Store
+  ) {
+    this.store
+      .select(state => state.shoppinglistDashboard)
+      .subscribe(({ shoppinglist }) => {
+        this.activeShoppingList = shoppinglist;
+        const formReady =
+          this.shoppingListForm &&
+          Object.keys(this.shoppingListForm.controls).length > 0;
+
+        if (this.activeShoppingList && formReady) {
+          this.initForm();
+        }
+      });
+  }
 
   saveItem(form: NgForm) {
     const { value } = form;
@@ -63,22 +78,29 @@ export class ShoppingListFormComponent implements OnInit {
     }
   }
 
+  initForm() {
+    const { name, description, ingredients } = this.activeShoppingList;
+    if (name && description && ingredients) {
+      this.shoppingListForm.setValue({
+        name,
+        description,
+        ingredients
+      });
+      this.editMode = true;
+      this.generatePreview(this.shoppingListForm);
+    }
+  }
+
   ngOnInit() {
     // Check for Id in param and switch to edit mode
     this.route.params.subscribe((params: Params) => {
       this.id = +params['id'];
-      this.shoppingListService.getShoppingListById(this.id).subscribe(
-        (shoppinglist: any) => {
-          this.shoppingListForm.setValue({
-            name: shoppinglist.name,
-            description: shoppinglist.description,
-            ingredients: shoppinglist.ingredients
-          });
-          this.editMode = true;
-          this.generatePreview(this.shoppingListForm);
-        },
-        err => console.log(err)
-      );
+      // Dispatch Shopping List Fetch by Id
+      if (this.id) {
+        this.store.dispatch(
+          new GetShoppingList(this.shoppingListService, this.store, this.id)
+        );
+      }
     });
   }
 }
