@@ -2,30 +2,45 @@ import { State, Action, StateContext } from '@ngxs/store';
 import { ShoppingList } from '../../components/shopping-list/shopping-list.model';
 import {
   ShoppingListLoading,
-  SetShoppingLists
+  SetShoppingLists,
+  SetShoppingList
 } from '../actions/shopping-list.actions';
 
 export class ShoppingListStateModel {
   loading: boolean;
   shoppinglists: ShoppingList[];
+  shoppinglist: ShoppingList;
 }
 
 @State<ShoppingListStateModel>({
   name: 'shoppinglistDashboard',
   defaults: {
     loading: false,
-    shoppinglists: []
+    shoppinglists: [],
+    shoppinglist: null
   }
 })
 export class ShoppingListState {
   @Action(SetShoppingLists)
   setShoppingLists(
-    { setState }: StateContext<ShoppingListStateModel>,
+    { patchState }: StateContext<ShoppingListStateModel>,
     { payload }: SetShoppingLists
   ) {
-    setState({
+    patchState({
       loading: false,
-      shoppinglists: payload
+      shoppinglists: payload,
+      shoppinglist: null
+    });
+  }
+
+  @Action(SetShoppingList)
+  setShoppingList(
+    { patchState }: StateContext<ShoppingListStateModel>,
+    { payload }: SetShoppingList
+  ) {
+    patchState({
+      loading: false,
+      shoppinglist: payload
     });
   }
 
