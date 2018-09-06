@@ -1,18 +1,11 @@
 import { Ingredient } from '../shared/ingredient.model';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ShoppingList } from './shopping-list.model';
 
 @Injectable()
 export class ShoppingListService {
-  shoppinglistsUpdated = new Subject<ShoppingList[]>();
-  ingredientsChanged = new Subject<Ingredient[]>();
-  ingredientEdit = new Subject<number>();
-  shopping_lists: ShoppingList[];
-
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(private http: HttpClient) {}
 
   private generateIngredient(ingredient) {
     return new Ingredient(ingredient.id, ingredient.name, ingredient.amount);
@@ -75,16 +68,7 @@ export class ShoppingListService {
   }
 
   deleteShoppingList(id) {
-    this.http.delete(`/api/shoppinglist/${id}`).subscribe(
-      () => {
-        const index = this.shopping_lists.findIndex(
-          shoppinglist => shoppinglist.id === id
-        );
-        this.shopping_lists.splice(index, 1);
-        this.shoppinglistsUpdated.next(this.shopping_lists.slice());
-      },
-      err => console.log(err)
-    );
+    return this.http.delete(`/api/shoppinglist/${id}`);
   }
 
   createIngredient(shoppinglistId, postData) {
