@@ -98,27 +98,27 @@ export class ShoppingListIngredientsManagerComponent
     // Check for Id in param and switch to edit mode
     const shoppingListId: number = +this.route.snapshot.paramMap.get('id');
     if (shoppingListId) {
-      this.shoppingListService.getShoppingListById(shoppingListId).subscribe(
-        (shoppinglist: any) => {
-          if (shoppinglist) {
-            // Extract shopping list name and description
-            this.shoppingListId = shoppinglist.id;
-            this.shoppingListName = shoppinglist.name;
-            this.shoppingListDescription = shoppinglist.description;
-            const { ingredients } = shoppinglist;
-            // Extract ingredients data
-            if (ingredients && ingredients.length > 0) {
-              shoppinglist.ingredients.forEach(ingredient => {
-                const { id, name, amount } = ingredient;
-                if (id && name && amount) {
-                  this.ingredients.push(new Ingredient(id, name, amount));
-                }
-              });
-            }
-          }
-        },
-        err => console.log(err)
-      );
+      // this.shoppingListService.getShoppingListById(shoppingListId).subscribe(
+      //   (shoppinglist: any) => {
+      //     if (shoppinglist) {
+      //       // Extract shopping list name and description
+      //       this.shoppingListId = shoppinglist.id;
+      //       this.shoppingListName = shoppinglist.name;
+      //       this.shoppingListDescription = shoppinglist.description;
+      //       const { ingredients } = shoppinglist;
+      //       // Extract ingredients data
+      //       if (ingredients && ingredients.length > 0) {
+      //         shoppinglist.ingredients.forEach(ingredient => {
+      //           const { id, name, amount } = ingredient;
+      //           if (id && name && amount) {
+      //             this.ingredients.push(new Ingredient(id, name, amount));
+      //           }
+      //         });
+      //       }
+      //     }
+      //   },
+      //   err => console.log(err)
+      // );
     }
   }
 }
