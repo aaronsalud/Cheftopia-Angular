@@ -8,7 +8,16 @@ import { SetErrors } from '../../store/actions/errors.actions';
 
 @Injectable()
 export class ShoppingListService {
-  constructor(private http: HttpClient, private store: Store) { }
+  shoppinglists: ShoppingList[];
+  constructor(private http: HttpClient, private store: Store) {
+    this.store
+      .select(state => state.shoppinglistDashboard)
+      .subscribe(({ shoppinglists }) => {
+        if (shoppinglists) {
+          this.shoppinglists = shoppinglists;
+        }
+      });
+  }
 
   private generateIngredient(ingredient) {
     return new Ingredient(ingredient.id, ingredient.name, ingredient.amount);
@@ -102,7 +111,20 @@ export class ShoppingListService {
   }
 
   deleteShoppingList(id) {
-    return this.http.delete(`/api/shoppinglist/${id}`);
+    this.store.dispatch(new ShoppingListLoading());
+    this.http.delete(`/api/shoppinglist/${id}`).subscribe(
+      () => {
+        const index = this.shoppinglists.findIndex(
+          shoppinglist => shoppinglist.id === id
+        );
+        this.shoppinglists.splice(index, 1);
+        this.store.dispatch(new SetShoppingLists(this.shoppinglists));
+      },
+      err => {
+        this.store.dispatch(new ShoppingListLoading());
+        this.store.dispatch(new SetErrors(err));
+      }
+    );
   }
 
   createIngredient(shoppinglistId, postData) {

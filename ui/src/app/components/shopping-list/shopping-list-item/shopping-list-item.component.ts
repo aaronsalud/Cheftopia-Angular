@@ -1,8 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ShoppingList } from '../shopping-list.model';
 import { ShoppingListService } from '../shopping-list.service';
-import { Store } from '@ngxs/store';
-import { DeleteShoppingList } from '../../../store/actions/shopping-list.actions';
 
 @Component({
   selector: 'app-shopping-list-item',
@@ -15,14 +13,11 @@ export class ShoppingListItemComponent implements OnInit {
   @Input()
   hideActions: boolean;
   constructor(
-    private shoppingListService: ShoppingListService,
-    private store: Store
+    private shoppingListService: ShoppingListService
   ) {}
 
   deleteItem(id) {
-    this.store.dispatch(
-      new DeleteShoppingList(id, this.store, this.shoppingListService)
-    );
+    this.shoppingListService.deleteShoppingList(id);
   }
 
   ngOnInit() {}
