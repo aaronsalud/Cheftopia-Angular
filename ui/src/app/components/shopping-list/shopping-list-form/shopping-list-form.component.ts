@@ -5,20 +5,21 @@ import { Ingredient } from '../../shared/ingredient.model';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { ShoppingListService } from '../shopping-list.service';
 import { Store } from '@ngxs/store';
-import { GetShoppingList } from '../../../store/actions/shopping-list.actions';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-shopping-list-form',
   templateUrl: './shopping-list-form.component.html',
   styleUrls: ['./shopping-list-form.component.css']
 })
-export class ShoppingListFormComponent implements OnInit {
+export class ShoppingListFormComponent implements OnInit, OnDestroy {
   @ViewChild('form')
   shoppingListForm: NgForm;
-  id: number;
   activeShoppingList: ShoppingList;
-  editMode: boolean = false;
   shoppingListPreview: ShoppingList;
+  storeSubscription: Subscription;
+  editMode: boolean = false;
+  id: number;
 
   constructor(
     private router: Router,
@@ -26,7 +27,7 @@ export class ShoppingListFormComponent implements OnInit {
     private shoppingListService: ShoppingListService,
     private store: Store
   ) {
-    this.store
+    this.storeSubscription = this.store
       .select(state => state.shoppinglistDashboard)
       .subscribe(({ shoppinglist }) => {
         this.activeShoppingList = shoppinglist;
@@ -97,10 +98,12 @@ export class ShoppingListFormComponent implements OnInit {
       this.id = +params['id'];
       // Dispatch Shopping List Fetch by Id
       if (this.id) {
-        this.store.dispatch(
-          new GetShoppingList(this.shoppingListService, this.store, this.id)
-        );
+        this.shoppingListService.getShoppingListById(this.id);
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.storeSubscription.unsubscribe();
   }
 }
