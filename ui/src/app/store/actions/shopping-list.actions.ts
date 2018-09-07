@@ -36,38 +36,10 @@ export class DeleteShoppingList {
   }
 }
 
-// Fetch Shopping List Data
-export class GetShoppingList {
-  static readonly type = '[SHOPPING LIST] Fetch shopping list by Id';
-  private shoppinglists: ShoppingList[] = [];
-
-  constructor(
-    private shoppinglistService: ShoppingListService,
-    private store: Store,
-    id: number
-  ) {
-    this.store.dispatch(new ShoppingListLoading());
-    this.shoppinglistService.getShoppingListById(id).subscribe(
-      (shoppinglist: any) => {
-        if (shoppinglist) {
-          this.shoppinglists.push(
-            this.shoppinglistService.generateShoppingList(shoppinglist)
-          );
-        }
-        this.store.dispatch(new SetShoppingList(shoppinglist));
-      },
-      err => {
-        this.store.dispatch(new ShoppingListLoading());
-        this.store.dispatch(new SetErrors(err));
-      }
-    );
-  }
-}
-
 // Set Shopping List State
 export class SetShoppingList {
   static readonly type = '[SHOPPING LIST] Set Shopping List';
-  constructor(public shoppinglists: ShoppingList) {}
+  constructor(public shoppinglist: ShoppingList) {}
 }
 
 // Set Shopping Lists State
