@@ -6,9 +6,7 @@ import { User } from '../../components/auth/user.model';
 export class LoginUser {
   static readonly type = '[AUTH] Login User';
 
-  constructor(currentUser: User, private store: Store) {
-    this.store.dispatch(new SetCurrentUser(true, currentUser));
-  }
+  constructor(private currentUser: User) {}
 }
 
 // Set Current User Action

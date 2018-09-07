@@ -25,8 +25,8 @@ export class AuthService {
     this.http.post('/api/users/login', data).subscribe(
       data => {
         this.setAuthToken(data['token']);
+        this.store.dispatch(new LoginUser(this.getCurrentUser()));
         this.router.navigate(['/recipes']);
-        this.store.dispatch(new LoginUser(this.getCurrentUser(), this.store));
       },
       err => this.dispatchErrors(err)
     );
