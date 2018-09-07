@@ -36,11 +36,11 @@ export class ShoppingListState {
   @Action(SetShoppingList)
   setShoppingList(
     { patchState }: StateContext<ShoppingListStateModel>,
-    { payload }: SetShoppingList
+    { shoppinglist }: SetShoppingList
   ) {
     patchState({
       loading: false,
-      shoppinglist: payload
+      shoppinglist
     });
   }
 
