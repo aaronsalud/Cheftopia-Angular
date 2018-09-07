@@ -3,22 +3,33 @@ import { HttpClient } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { User } from './user.model';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Store } from '@ngxs/store';
+import { ClearErrors, SetErrors } from '../../store/actions/errors.actions';
+import { LoginUser } from '../../store/actions/auth.actions';
 
 @Injectable()
 export class AuthService {
-  loggedInSuccessfully = new Subject();
-  loginErrors = new Subject();
-  signUpErrors = new Subject();
-
   constructor(
     private http: HttpClient,
     public jwtHelper: JwtHelperService,
-    private router: Router
+    private router: Router,
+    private store: Store
   ) {}
 
+  dispatchErrors(errors) {
+    this.store.dispatch(new SetErrors(errors));
+    setTimeout(() => this.store.dispatch(new ClearErrors()), 5000);
+  }
+
   login(data) {
-    return this.http.post('/api/users/login', data);
+    this.http.post('/api/users/login', data).subscribe(
+      data => {
+        this.setAuthToken(data['token']);
+        this.router.navigate(['/recipes']);
+        this.store.dispatch(new LoginUser(this.getCurrentUser(), this.store));
+      },
+      err => this.dispatchErrors(err)
+    );
   }
 
   signup(data) {

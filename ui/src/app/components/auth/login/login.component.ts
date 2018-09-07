@@ -14,12 +14,8 @@ export class LoginComponent implements OnInit {
   errors;
 
   @ViewChild('form')
-  shoppingListForm: NgForm;
-  constructor(
-    private authService: AuthService,
-    private store: Store,
-    private router: Router
-  ) {
+  loginForm: NgForm;
+  constructor(private authService: AuthService, private store: Store) {
     this.store
       .select(state => state.errors)
       .subscribe(errors => (this.errors = errors));
@@ -29,8 +25,6 @@ export class LoginComponent implements OnInit {
 
   login(form: NgForm) {
     const { value } = form;
-    this.store.dispatch(
-      new LoginUser(value, this.authService, this.store, this.router)
-    );
+    this.authService.login(value);
   }
 }

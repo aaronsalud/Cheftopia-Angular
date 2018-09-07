@@ -27,25 +27,9 @@ export class RegisterUser {
 // Login User Action
 export class LoginUser {
   static readonly type = '[AUTH] Login User';
-  payload: any;
 
-  constructor(
-    payload: any,
-    private authService: AuthService,
-    private store: Store,
-    private router: Router
-  ) {
-    this.store.dispatch(new ClearErrors());
-    this.authService.login(payload).subscribe(
-      data => {
-        this.authService.setAuthToken(data['token']);
-        this.router.navigate(['/recipes']);
-        this.store.dispatch(
-          new SetCurrentUser(true, this.authService.getCurrentUser())
-        );
-      },
-      err => this.store.dispatch(new SetErrors(err))
-    );
+  constructor(currentUser: User, private store: Store) {
+    this.store.dispatch(new SetCurrentUser(true, currentUser));
   }
 }
 
