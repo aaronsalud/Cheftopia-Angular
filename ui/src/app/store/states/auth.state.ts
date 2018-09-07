@@ -5,7 +5,7 @@ import { SetCurrentUser, LogoutUser } from '../actions/auth.actions';
   name: 'auth',
   defaults: {
     isAuthenticated: false,
-    user: {}
+    user: null
   }
 })
 export class AuthState {
@@ -20,7 +20,7 @@ export class AuthState {
   logoutUser({ patchState }: any) {
     patchState({
       isAuthenticated: false,
-      user: {}
+      user: null
     });
   }
 }
