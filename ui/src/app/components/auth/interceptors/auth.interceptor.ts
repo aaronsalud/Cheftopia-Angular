@@ -26,7 +26,7 @@ export class AuthInterceptor implements HttpInterceptor {
     const authToken = this.authService.getAuthToken();
     const currentUser = this.authService.getCurrentUser();
     if (currentUser && authToken) {
-      if (this.auth && (!this.auth.isAuthenticated && !this.auth.user.name)) {
+      if (this.auth && (!this.auth.isAuthenticated || !this.auth.user )) {
         this.store.dispatch(new SetCurrentUser(true, currentUser));
       }
       request = request.clone({
