@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ShoppingList } from './shopping-list.model';
 import { Store } from '@ngxs/store';
-import { ShoppingListLoading, SetShoppingLists } from '../../store/actions/shopping-list.actions';
+import { ShoppingListLoading, SetShoppingLists, SetShoppingList } from '../../store/actions/shopping-list.actions';
 import { SetErrors } from '../../store/actions/errors.actions';
 
 @Injectable()
@@ -75,8 +75,22 @@ export class ShoppingListService {
     );
   }
 
+  // Fetch Shopping List By Id
   getShoppingListById(id: number) {
-    return this.http.get(`/api/shoppinglist/${id}`);
+    this.store.dispatch(new ShoppingListLoading());
+    this.http.get(`/api/shoppinglist/${id}`).subscribe(
+      (shoppinglist: any) => {
+        let shopping_list: ShoppingList;
+        if (shoppinglist) {
+          shopping_list = this.generateShoppingList(shoppinglist)
+        }
+        this.store.dispatch(new SetShoppingList(shopping_list));
+      },
+      err => {
+        this.store.dispatch(new ShoppingListLoading());
+        this.store.dispatch(new SetErrors(err));
+      }
+    );
   }
 
   createShoppingList(postData) {
