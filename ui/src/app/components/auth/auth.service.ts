@@ -33,7 +33,12 @@ export class AuthService {
   }
 
   signup(data) {
-    return this.http.post('/api/users/register', data);
+    this.http.post('/api/users/register', data).subscribe(
+      () => {
+        this.router.navigate(['/login']);
+      },
+      err => this.dispatchErrors(err)
+    );
   }
 
   setAuthToken(token) {
