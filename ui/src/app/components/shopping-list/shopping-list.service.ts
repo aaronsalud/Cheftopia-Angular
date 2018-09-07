@@ -2,10 +2,13 @@ import { Ingredient } from '../shared/ingredient.model';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ShoppingList } from './shopping-list.model';
+import { Store } from '@ngxs/store';
+import { ShoppingListLoading, SetShoppingLists } from '../../store/actions/shopping-list.actions';
+import { SetErrors } from '../../store/actions/errors.actions';
 
 @Injectable()
 export class ShoppingListService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private store: Store) { }
 
   private generateIngredient(ingredient) {
     return new Ingredient(ingredient.id, ingredient.name, ingredient.amount);
@@ -52,7 +55,24 @@ export class ShoppingListService {
 
   // Fetch Shopping Lists Method
   getShoppingLists(queryParams = null) {
-    return this.http.get(this.composeQueryString(queryParams));
+    this.store.dispatch(new ShoppingListLoading());
+    this.http.get(this.composeQueryString(queryParams)).subscribe(
+      (shoppinglists: any) => {
+        const shopping_lists: ShoppingList[] = [];
+        shoppinglists.forEach((shoppinglist: any) => {
+          if (shoppinglist) {
+            shopping_lists.push(
+              this.generateShoppingList(shoppinglist)
+            );
+          }
+        });
+        this.store.dispatch(new SetShoppingLists(shopping_lists));
+      },
+      err => {
+        this.store.dispatch(new ShoppingListLoading());
+        this.store.dispatch(new SetErrors(err));
+      }
+    );
   }
 
   getShoppingListById(id: number) {

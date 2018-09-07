@@ -1,18 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { ShoppingListService } from '../shopping-list.service';
 import { ShoppingList } from '../shopping-list.model';
-import { GetShoppingLists } from '../../../store/actions/shopping-list.actions';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-shopping-list-items',
   templateUrl: './shopping-list-items.component.html',
   styleUrls: ['./shopping-list-items.component.css']
 })
-export class ShoppingListItemsComponent implements OnInit {
+export class ShoppingListItemsComponent implements OnInit, OnDestroy {
   selectedArchiveOption = '';
   loading: boolean = false;
   shoppinglists: ShoppingList[];
+  storeSubscription: Subscription;
+
   archiveSelectOptions = [
     { name: 'Filter by', value: '' },
     { name: 'Active', value: 0 },
@@ -22,7 +24,7 @@ export class ShoppingListItemsComponent implements OnInit {
     private shoppingListService: ShoppingListService,
     private store: Store
   ) {
-    this.store
+    this.storeSubscription = this.store
       .select(state => state.shoppinglistDashboard)
       .subscribe(({ shoppinglists, loading }) => {
         this.shoppinglists = shoppinglists;
@@ -32,14 +34,14 @@ export class ShoppingListItemsComponent implements OnInit {
 
   onArchiveFilterChange(event) {
     const queryParams = { archived: event };
-    this.store.dispatch(
-      new GetShoppingLists(this.shoppingListService, this.store, queryParams)
-    );
+    this.shoppingListService.getShoppingLists(queryParams);
   }
 
   ngOnInit() {
-    this.store.dispatch(
-      new GetShoppingLists(this.shoppingListService, this.store)
-    );
+    this.shoppingListService.getShoppingLists();
+  }
+
+  ngOnDestroy() {
+    this.storeSubscription.unsubscribe();
   }
 }
