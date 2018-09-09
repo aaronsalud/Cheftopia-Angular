@@ -1,19 +1,20 @@
-import { Ingredient } from '../shared/ingredient.model';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ShoppingList } from './shopping-list.model';
+import { Subject } from 'rxjs';
 import { Store } from '@ngxs/store';
+import { ShoppingList } from './shopping-list.model';
+import { Ingredient } from '../shared/ingredient.model';
+import { SetErrors } from '../../store/actions/errors.actions';
 import {
   ShoppingListLoading,
   SetShoppingLists,
   SetShoppingList
 } from '../../store/actions/shopping-list.actions';
-import { SetErrors } from '../../store/actions/errors.actions';
-import { Subject } from 'rxjs';
 
 @Injectable()
 export class ShoppingListService {
   shoppinglists: ShoppingList[];
+  shoppinglist: ShoppingList;
   shoppingListsUpdated: Subject<ShoppingList[]> = new Subject();
   shoppingListLoading: Subject<boolean> = new Subject();
   activeShoppingList: Subject<ShoppingList> = new Subject();
@@ -26,7 +27,11 @@ export class ShoppingListService {
           this.shoppinglists = shoppinglists;
           this.shoppingListsUpdated.next(this.shoppinglists);
         }
-        this.activeShoppingList.next(shoppinglist);
+        if (shoppinglist) {
+          this.shoppinglist = shoppinglist;
+          this.activeShoppingList.next(this.shoppinglist);
+        }
+
         this.shoppingListLoading.next(loading);
       });
   }
@@ -138,22 +143,62 @@ export class ShoppingListService {
   }
 
   createIngredient(shoppinglistId, postData) {
-    return this.http.post(
-      `/api/shoppinglist/${shoppinglistId}/ingredient`,
-      postData
-    );
+    this.store.dispatch(new ShoppingListLoading());
+    return this.http
+      .post(`/api/shoppinglist/${shoppinglistId}/ingredient`, postData)
+      .subscribe(
+        (shoppinglist: any) => {
+          let shopping_list: ShoppingList;
+          if (shoppinglist) {
+            shopping_list = this.generateShoppingList(shoppinglist);
+          }
+          this.store.dispatch(new SetShoppingList(shopping_list));
+        },
+        err => {
+          this.store.dispatch(new ShoppingListLoading());
+          this.store.dispatch(new SetErrors(err));
+        }
+      );
   }
 
   editIngredient(shoppinglistId, ingredientId, postData) {
-    return this.http.put(
-      `/api/shoppinglist/${shoppinglistId}/ingredient/${ingredientId}`,
-      postData
-    );
+    this.store.dispatch(new ShoppingListLoading());
+    return this.http
+      .put(
+        `/api/shoppinglist/${shoppinglistId}/ingredient/${ingredientId}`,
+        postData
+      )
+      .subscribe(
+        (shoppinglist: any) => {
+          let shopping_list: ShoppingList;
+          if (shoppinglist) {
+            shopping_list = this.generateShoppingList(shoppinglist);
+          }
+          this.store.dispatch(new SetShoppingList(shopping_list));
+        },
+        err => {
+          this.store.dispatch(new ShoppingListLoading());
+          this.store.dispatch(new SetErrors(err));
+        }
+      );
   }
 
   deleteIngredient(shoppinglistId, ingredientId) {
-    return this.http.delete(
-      `/api/shoppinglist/${shoppinglistId}/ingredient/${ingredientId}`
-    );
+    this.store.dispatch(new ShoppingListLoading());
+    return this.http
+      .delete(`/api/shoppinglist/${shoppinglistId}/ingredient/${ingredientId}`)
+      .subscribe(
+        () => {
+          const index = this.shoppinglist.ingredients.findIndex(
+            ingredient => ingredient.id === ingredientId
+          );
+          this.shoppinglist.ingredients.splice(index, 1);
+          this.store.dispatch(new SetShoppingList(this.shoppinglist));
+        },
+        err => {
+          this.store.dispatch(new ShoppingListLoading());
+          this.store.dispatch(new SetErrors(err));
+        }
+      );
   }
 }
