@@ -10,38 +10,46 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./shopping-list-items.component.css']
 })
 export class ShoppingListItemsComponent implements OnInit, OnDestroy {
+  shoppingListsSubscription: Subscription;
+  loadingSubscription: Subscription;
   selectedArchiveOption = '';
   loading: boolean = false;
   shoppinglists: ShoppingList[];
-  storeSubscription: Subscription;
 
   archiveSelectOptions = [
     { name: 'Filter by', value: '' },
     { name: 'Active', value: 0 },
     { name: 'Archived', value: 1 }
   ];
-  constructor(
-    private shoppingListService: ShoppingListService,
-    private store: Store
-  ) {
-    this.storeSubscription = this.store
-      .select(state => state.shoppinglistDashboard)
-      .subscribe(({ shoppinglists, loading }) => {
-        this.shoppinglists = shoppinglists;
-        this.loading = loading;
-      });
-  }
+
+  constructor(private shoppingListService: ShoppingListService) {}
 
   onArchiveFilterChange(event) {
     const queryParams = { archived: event };
     this.shoppingListService.getShoppingLists(queryParams);
   }
 
+  setupSubscriptions() {
+    this.shoppingListsSubscription = this.shoppingListService.shoppingListsUpdated.subscribe(
+      shoppinglists => {
+        this.shoppinglists = shoppinglists;
+      }
+    );
+
+    this.loadingSubscription = this.shoppingListService.shoppingListLoading.subscribe(
+      loading => {
+        this.loading = loading;
+      }
+    );
+  }
+
   ngOnInit() {
+    this.setupSubscriptions();
     this.shoppingListService.getShoppingLists();
   }
 
   ngOnDestroy() {
-    this.storeSubscription.unsubscribe();
+    this.shoppingListsSubscription.unsubscribe();
+    this.shoppingListsSubscription.unsubscribe();
   }
 }
