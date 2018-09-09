@@ -6,13 +6,13 @@
     <div class="row">
       <div class="header card col">
         <h3>Shopping List info:</h3>
-        <div class="row" *ngIf="shoppingListName">
+        <div class="row" *ngIf="activeShoppingList && activeShoppingList.name">
           <div class="col-3">Name:</div>
-          <div class="col">{{ shoppingListName }}</div>
+          <div class="col">{{ activeShoppingList.name }}</div>
         </div>
-        <div class="row" *ngIf="shoppingListDescription">
+        <div class="row" *ngIf="activeShoppingList && activeShoppingList.description">
           <div class="col-3">Description:</div>
-          <div class="col">{{ shoppingListDescription }}</div>
+          <div class="col">{{ activeShoppingList.description }}</div>
         </div>
       </div>
     </div>
@@ -27,11 +27,13 @@
           </div>
           <div class="form-group col-5">
             <label for="amount">Amount</label>
-            <input type="number" id="amount" name="amount" ngModel class="form-control" pattern="^[1-9]+[0-9]*$" required>
+            <input type="number" id="amount" name="amount" ngModel class="form-control" pattern="^[1-9]+[0-9]*$"
+              required>
           </div>
           <div class="row mt-3 ml-1">
             <div class="col-12">
-              <button class="btn btn-success mr-1" type="submit" [disabled]="!form.valid">{{ editMode ? 'Save Changes' :
+              <button class="btn btn-success mr-1" type="submit" [disabled]="!form.valid">{{ editMode ? 'Save Changes'
+                :
                 'Add Item'}}
               </button>
               <button *ngIf="editMode" class="btn btn-danger mr-1" type="button" (click)="deleteItem()">Delete</button>
@@ -42,12 +44,15 @@
       </div>
     </div>
   </div>
-  <div class="col">
+  <div class="col" *ngIf="activeShoppingList">
     <ul class="list-group">
       <li class="list-group-item"><b>Ingredients:</b></li>
-      <li class="list-group-item" *ngIf="ingredients && ingredients.length == 0"><i>No Ingredients Yet</i></li>
+      <li class="list-group-item" *ngIf="activeShoppingList.ingredients == 0 "><i>No
+          Ingredients Yet</i></li>
       <li class="list-group-item selectable" [ngClass]="{'selected':( ingredient == ingredientBeingEdited)}" *ngFor=" let ingredient
-        of ingredients " (click)="toggleIngredientEdit(ingredient) ">{{ ingredient.amount}} {{ingredient.name}}
+        of activeShoppingList.ingredients "
+        (click)="toggleIngredientEdit(ingredient) ">{{
+        ingredient.amount}} {{ingredient.name}}
       </li>
     </ul>
   </div>
