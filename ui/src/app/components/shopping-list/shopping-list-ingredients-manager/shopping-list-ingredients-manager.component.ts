@@ -2,7 +2,9 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Ingredient } from '../../shared/ingredient.model';
 import { ShoppingListService } from '../shopping-list.service';
 import { NgForm } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
+import { ShoppingList } from '../shopping-list.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-shopping-list-ingredients-manager',
@@ -10,16 +12,14 @@ import { Router, ActivatedRoute } from '@angular/router';
   styleUrls: ['./shopping-list-ingredients-manager.component.css']
 })
 export class ShoppingListIngredientsManagerComponent
-  implements OnInit {
+  implements OnInit, OnDestroy {
   @ViewChild('form')
   ingredientForm: NgForm;
+  activeShoppingListSubscription: Subscription;
   ingredientBeingEdited: Ingredient;
-  ingredients: Ingredient[] = [];
-  shoppingListId: number;
-  shoppingListName: string;
-  shoppingListDescription: string;
-
-  editMode = false;
+  activeShoppingList: ShoppingList;
+  editMode: boolean = false;
+  id: number;
 
   constructor(
     private shoppingListService: ShoppingListService,
@@ -30,53 +30,23 @@ export class ShoppingListIngredientsManagerComponent
     const { value } = form;
     // Edit Ingredient
     if (this.editMode) {
-      this.shoppingListService
-        .editIngredient(
-          this.shoppingListId,
-          this.ingredientBeingEdited.id,
-          value
-        )
-        .subscribe(
-          (data: any) => {
-            const { ingredients } = data;
-            if (ingredients) {
-              this.ingredients = ingredients;
-              this.resetForm();
-            }
-          },
-          err => console.log(err)
-        );
+      this.shoppingListService.editIngredient(
+        this.id,
+        this.ingredientBeingEdited.id,
+        value
+      );
     }
     // Create Ingredient
     else if (value && value.name && value.amount) {
-      this.shoppingListService
-        .createIngredient(this.shoppingListId, value)
-        .subscribe(
-          (data: any) => {
-            const { ingredients } = data;
-            if (ingredients) {
-              this.ingredients = ingredients;
-              this.resetForm();
-            }
-          },
-          err => console.log(err)
-        );
+      this.shoppingListService.createIngredient(this.id, value);
     }
   }
 
   deleteItem() {
-    this.shoppingListService
-      .deleteIngredient(this.shoppingListId, this.ingredientBeingEdited.id)
-      .subscribe(
-        data => {
-          const index = this.ingredients.findIndex(
-            ingredient => ingredient.id === this.ingredientBeingEdited.id
-          );
-          this.ingredients.splice(index, 1);
-          this.resetForm();
-        },
-        err => console.log(err)
-      );
+    this.shoppingListService.deleteIngredient(
+      this.id,
+      this.ingredientBeingEdited.id
+    );
   }
 
   resetForm() {
@@ -96,29 +66,22 @@ export class ShoppingListIngredientsManagerComponent
 
   ngOnInit() {
     // Check for Id in param and switch to edit mode
-    const shoppingListId: number = +this.route.snapshot.paramMap.get('id');
-    if (shoppingListId) {
-      // this.shoppingListService.getShoppingListById(shoppingListId).subscribe(
-      //   (shoppinglist: any) => {
-      //     if (shoppinglist) {
-      //       // Extract shopping list name and description
-      //       this.shoppingListId = shoppinglist.id;
-      //       this.shoppingListName = shoppinglist.name;
-      //       this.shoppingListDescription = shoppinglist.description;
-      //       const { ingredients } = shoppinglist;
-      //       // Extract ingredients data
-      //       if (ingredients && ingredients.length > 0) {
-      //         shoppinglist.ingredients.forEach(ingredient => {
-      //           const { id, name, amount } = ingredient;
-      //           if (id && name && amount) {
-      //             this.ingredients.push(new Ingredient(id, name, amount));
-      //           }
-      //         });
-      //       }
-      //     }
-      //   },
-      //   err => console.log(err)
-      // );
-    }
+    this.route.params.subscribe((params: Params) => {
+      this.id = +params['id'];
+      if (this.id) {
+        this.shoppingListService.getShoppingListById(this.id);
+      }
+    });
+
+    this.activeShoppingListSubscription = this.shoppingListService.activeShoppingList.subscribe(
+      shoppinglist => {
+        this.activeShoppingList = shoppinglist;
+        this.resetForm();
+      }
+    );
+  }
+
+  ngOnDestroy() {
+    this.activeShoppingListSubscription.unsubscribe();
   }
 }
