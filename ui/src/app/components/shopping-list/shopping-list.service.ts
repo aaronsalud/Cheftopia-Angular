@@ -16,15 +16,17 @@ export class ShoppingListService {
   shoppinglists: ShoppingList[];
   shoppingListsUpdated: Subject<ShoppingList[]> = new Subject();
   shoppingListLoading: Subject<boolean> = new Subject();
+  activeShoppingList: Subject<ShoppingList> = new Subject();
 
   constructor(private http: HttpClient, private store: Store) {
     this.store
       .select(state => state.shoppinglistDashboard)
-      .subscribe(({ shoppinglists, loading }) => {
+      .subscribe(({ shoppinglists, loading, shoppinglist }) => {
         if (shoppinglists) {
           this.shoppinglists = shoppinglists;
           this.shoppingListsUpdated.next(this.shoppinglists);
         }
+        this.activeShoppingList.next(shoppinglist);
         this.shoppingListLoading.next(loading);
       });
   }

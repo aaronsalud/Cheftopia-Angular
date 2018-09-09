@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Store } from '@ngxs/store';
 import { ShoppingListService } from '../shopping-list.service';
 import { ShoppingList } from '../shopping-list.model';
 import { Subscription } from 'rxjs';
@@ -11,7 +10,6 @@ import { Subscription } from 'rxjs';
 })
 export class ShoppingListItemsComponent implements OnInit, OnDestroy {
   shoppingListsSubscription: Subscription;
-  loadingSubscription: Subscription;
   selectedArchiveOption = '';
   loading: boolean = false;
   shoppinglists: ShoppingList[];
@@ -29,27 +27,16 @@ export class ShoppingListItemsComponent implements OnInit, OnDestroy {
     this.shoppingListService.getShoppingLists(queryParams);
   }
 
-  setupSubscriptions() {
+  ngOnInit() {
     this.shoppingListsSubscription = this.shoppingListService.shoppingListsUpdated.subscribe(
       shoppinglists => {
         this.shoppinglists = shoppinglists;
       }
     );
-
-    this.loadingSubscription = this.shoppingListService.shoppingListLoading.subscribe(
-      loading => {
-        this.loading = loading;
-      }
-    );
-  }
-
-  ngOnInit() {
-    this.setupSubscriptions();
     this.shoppingListService.getShoppingLists();
   }
 
   ngOnDestroy() {
-    this.shoppingListsSubscription.unsubscribe();
     this.shoppingListsSubscription.unsubscribe();
   }
 }

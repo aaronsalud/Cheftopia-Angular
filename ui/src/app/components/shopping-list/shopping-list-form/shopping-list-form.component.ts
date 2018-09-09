@@ -4,7 +4,6 @@ import { ShoppingList } from '../shopping-list.model';
 import { Ingredient } from '../../shared/ingredient.model';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { ShoppingListService } from '../shopping-list.service';
-import { Store } from '@ngxs/store';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -15,31 +14,18 @@ import { Subscription } from 'rxjs';
 export class ShoppingListFormComponent implements OnInit, OnDestroy {
   @ViewChild('form')
   shoppingListForm: NgForm;
+  activeShoppingListSubscription: Subscription;
   activeShoppingList: ShoppingList;
   shoppingListPreview: ShoppingList;
-  storeSubscription: Subscription;
+
   editMode: boolean = false;
   id: number;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private shoppingListService: ShoppingListService,
-    private store: Store
-  ) {
-    this.storeSubscription = this.store
-      .select(state => state.shoppinglistDashboard)
-      .subscribe(({ shoppinglist }) => {
-        this.activeShoppingList = shoppinglist;
-        const formReady =
-          this.shoppingListForm &&
-          Object.keys(this.shoppingListForm.controls).length > 0;
-
-        if (this.activeShoppingList && formReady) {
-          this.initForm();
-        }
-      });
-  }
+    private shoppingListService: ShoppingListService
+  ) {}
 
   saveItem(form: NgForm) {
     const { value } = form;
@@ -96,14 +82,20 @@ export class ShoppingListFormComponent implements OnInit, OnDestroy {
     // Check for Id in param and switch to edit mode
     this.route.params.subscribe((params: Params) => {
       this.id = +params['id'];
-      // Dispatch Shopping List Fetch by Id
       if (this.id) {
         this.shoppingListService.getShoppingListById(this.id);
       }
     });
+
+    this.activeShoppingListSubscription = this.shoppingListService.activeShoppingList.subscribe(
+      shoppinglist => {
+        this.activeShoppingList = shoppinglist;
+        this.initForm();
+      }
+    );
   }
 
   ngOnDestroy() {
-    this.storeSubscription.unsubscribe();
+    this.activeShoppingListSubscription.unsubscribe();
   }
 }
