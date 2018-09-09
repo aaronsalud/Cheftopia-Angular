@@ -3,19 +3,29 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ShoppingList } from './shopping-list.model';
 import { Store } from '@ngxs/store';
-import { ShoppingListLoading, SetShoppingLists, SetShoppingList } from '../../store/actions/shopping-list.actions';
+import {
+  ShoppingListLoading,
+  SetShoppingLists,
+  SetShoppingList
+} from '../../store/actions/shopping-list.actions';
 import { SetErrors } from '../../store/actions/errors.actions';
+import { Subject } from 'rxjs';
 
 @Injectable()
 export class ShoppingListService {
   shoppinglists: ShoppingList[];
+  shoppingListsUpdated: Subject<ShoppingList[]> = new Subject();
+  shoppingListLoading: Subject<boolean> = new Subject();
+
   constructor(private http: HttpClient, private store: Store) {
     this.store
       .select(state => state.shoppinglistDashboard)
-      .subscribe(({ shoppinglists }) => {
+      .subscribe(({ shoppinglists, loading }) => {
         if (shoppinglists) {
           this.shoppinglists = shoppinglists;
+          this.shoppingListsUpdated.next(this.shoppinglists);
         }
+        this.shoppingListLoading.next(loading);
       });
   }
 
@@ -70,9 +80,7 @@ export class ShoppingListService {
         const shopping_lists: ShoppingList[] = [];
         shoppinglists.forEach((shoppinglist: any) => {
           if (shoppinglist) {
-            shopping_lists.push(
-              this.generateShoppingList(shoppinglist)
-            );
+            shopping_lists.push(this.generateShoppingList(shoppinglist));
           }
         });
         this.store.dispatch(new SetShoppingLists(shopping_lists));
@@ -91,7 +99,7 @@ export class ShoppingListService {
       (shoppinglist: any) => {
         let shopping_list: ShoppingList;
         if (shoppinglist) {
-          shopping_list = this.generateShoppingList(shoppinglist)
+          shopping_list = this.generateShoppingList(shoppinglist);
         }
         this.store.dispatch(new SetShoppingList(shopping_list));
       },
