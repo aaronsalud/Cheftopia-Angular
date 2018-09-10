@@ -5,19 +5,40 @@ import { Recipe } from './recipe.model';
 import { Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Store } from '@ngxs/store';
+import { SetRecipes } from '../../store/actions/recipe.actions';
 
 @Injectable()
 export class RecipeService {
   recipesUpdated = new Subject<Recipe[]>();
+  activeRecipe: Subject<Recipe> = new Subject();
   recipeFormErrors = new Subject();
+  recipeLoading = new Subject();
+  recipes: Recipe[];
+  recipe: Recipe;
+
   route: ActivatedRoute;
   constructor(
-    private shoppingListService: ShoppingListService,
+    // private shoppingListService: ShoppingListService,
     private http: HttpClient,
-    private router: Router
-  ) {}
+    private router: Router,
+    private store: Store
+  ) {
+    this.store
+      .select(state => state.recipeDashboard)
+      .subscribe(({ recipes, loading, recipe }) => {
+        if (recipes) {
+          this.recipes = recipes;
+          this.recipesUpdated.next(this.recipes);
+        }
+        if (recipe) {
+          this.recipe = recipe;
+          this.activeRecipe.next(this.recipe);
+        }
 
-  private recipes: Recipe[];
+        this.recipeLoading.next(loading);
+      });
+  }
 
   private generateIngredient(ingredient) {
     return new Ingredient(ingredient.id, ingredient.name, ingredient.amount);
@@ -32,7 +53,11 @@ export class RecipeService {
     }
     return ingredients;
   }
-  private generateRecipe(recipe, ingredients) {
+  private generateRecipe(recipe) {
+    let ingredients = [];
+    if (recipe.ingredients && recipe.ingredients.length > 0) {
+      ingredients = this.generateIngredients(recipe.ingredients);
+    }
     return new Recipe(
       recipe.id,
       recipe.name,
@@ -56,14 +81,13 @@ export class RecipeService {
   getRecipes() {
     this.http.get('/api/recipe').subscribe(
       (recipes: any) => {
-        this.recipes = [];
+        let recipeData = [];
         recipes.forEach((recipe: any) => {
           if (recipe) {
-            const ingredients = this.generateIngredients(recipe.ingredients);
-            this.recipes.push(this.generateRecipe(recipe, ingredients));
-            this.recipesUpdated.next(this.recipes.slice());
+            recipeData.push(this.generateRecipe(recipe));
           }
         });
+        this.store.dispatch(new SetRecipes(recipeData));
       },
       err => console.log(err)
     );
@@ -75,7 +99,7 @@ export class RecipeService {
       (recipe: any) => {
         if (recipe) {
           const ingredients = this.generateIngredients(recipe.ingredients);
-          this.recipes.push(this.generateRecipe(recipe, ingredients));
+          this.recipes.push(this.generateRecipe(recipe));
           this.recipesUpdated.next(this.recipes.slice());
           this.router.navigate(['../'], { relativeTo: this.route });
         }
@@ -89,11 +113,10 @@ export class RecipeService {
     this.http.put(`/api/recipe/${id}`, recipe).subscribe(
       (recipe: any) => {
         if (recipe) {
-          const ingredients = this.generateIngredients(recipe.ingredients);
           const index = this.recipes.findIndex(
             recipeItem => recipeItem.id === recipe.id
           );
-          this.recipes[index] = this.generateRecipe(recipe, ingredients);
+          this.recipes[index] = this.generateRecipe(recipe);
           this.recipesUpdated.next(this.recipes.slice());
           this.router.navigate(['../'], { relativeTo: this.route });
         }
