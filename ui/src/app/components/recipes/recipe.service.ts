@@ -6,7 +6,8 @@ import { Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Store } from '@ngxs/store';
-import { SetRecipes } from '../../store/actions/recipe.actions';
+import { SetRecipes, RecipeLoading } from '../../store/actions/recipe.actions';
+import { SetErrors } from '../../store/actions/errors.actions';
 
 @Injectable()
 export class RecipeService {
@@ -79,6 +80,7 @@ export class RecipeService {
 
   // Fetch Recipes Method
   getRecipes() {
+    this.store.dispatch(new RecipeLoading());
     this.http.get('/api/recipe').subscribe(
       (recipes: any) => {
         let recipeData = [];
@@ -89,7 +91,10 @@ export class RecipeService {
         });
         this.store.dispatch(new SetRecipes(recipeData));
       },
-      err => console.log(err)
+      err => {
+        this.store.dispatch(new RecipeLoading());
+        this.store.dispatch(new SetErrors(err));
+      }
     );
   }
 
@@ -98,13 +103,16 @@ export class RecipeService {
     this.http.post('/api/recipe', recipe).subscribe(
       (recipe: any) => {
         if (recipe) {
-          const ingredients = this.generateIngredients(recipe.ingredients);
-          this.recipes.push(this.generateRecipe(recipe));
-          this.recipesUpdated.next(this.recipes.slice());
+          let recipeData = this.recipes.slice();
+          recipeData.push(this.generateRecipe(recipe));
+          this.store.dispatch(new SetRecipes(recipeData));
           this.router.navigate(['../'], { relativeTo: this.route });
         }
       },
-      err => this.recipeFormErrors.next(err)
+      err => {
+        this.store.dispatch(new RecipeLoading());
+        this.store.dispatch(new SetErrors(err));
+      }
     );
   }
 
@@ -116,8 +124,9 @@ export class RecipeService {
           const index = this.recipes.findIndex(
             recipeItem => recipeItem.id === recipe.id
           );
-          this.recipes[index] = this.generateRecipe(recipe);
-          this.recipesUpdated.next(this.recipes.slice());
+          let recipeData = this.recipes.slice();
+          recipeData[index] = this.generateRecipe(recipe);
+          this.store.dispatch(new SetRecipes(recipeData));
           this.router.navigate(['../'], { relativeTo: this.route });
         }
       },
