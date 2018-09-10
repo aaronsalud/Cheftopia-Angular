@@ -35,6 +35,7 @@ import { ErrorsState } from './store/states/errors.state';
 import { AuthState } from './store/states/auth.state';
 import { ShoppingListState } from './store/states/shopping-list.state';
 import { LoaderComponent } from './components/loader/loader.component';
+import { RecipeState } from './store/states/recipe.state';
 
 @NgModule({
   declarations: [
@@ -64,7 +65,12 @@ import { LoaderComponent } from './components/loader/loader.component';
     FormsModule,
     ReactiveFormsModule,
     NgbModule.forRoot(),
-    NgxsModule.forRoot([ErrorsState, AuthState, ShoppingListState]),
+    NgxsModule.forRoot([
+      ErrorsState,
+      AuthState,
+      ShoppingListState,
+      RecipeState
+    ]),
     NgxsReduxDevtoolsPluginModule.forRoot(),
     NgxsLoggerPluginModule.forRoot()
   ],
