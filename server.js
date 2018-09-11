@@ -2,7 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const path = require('path');
-const Sequelize = require('sequelize');
 
 const users = require('./routes/api/users');
 const profile = require('./routes/api/profile');
@@ -14,23 +13,6 @@ const app = express();
 // Body parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-// DB Config
-const db = require('./config/keys').postgresURI;
-
-// Connect to PostgresSQL
-const sequelize = new Sequelize(db, {
-  dialect: 'postgres',
-  operatorsAliases: false
-});
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log('PostgresSQL DB Connection has been established successfully.');
-  })
-  .catch(err => {
-    console.error('Unable to connect to the database:', err);
-  });
 
 // Passport middleware
 app.use(passport.initialize());
