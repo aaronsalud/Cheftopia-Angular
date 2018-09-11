@@ -16,6 +16,7 @@ export class RecipeFormComponent implements OnInit, OnDestroy {
   recipeForm: FormGroup;
   recipe: Recipe;
   activeRecipeSubscription: Subscription;
+  errors: any;
   constructor(
     private route: ActivatedRoute,
     private recipeService: RecipeService,
@@ -29,6 +30,11 @@ export class RecipeFormComponent implements OnInit, OnDestroy {
         this.initForm();
       }
     );
+
+    this.recipeService.recipeFormErrors.subscribe(errors => {
+      this.errors = errors;
+    });
+
     this.route.params.subscribe((params: Params) => {
       this.id = +params['id'];
       // Toggle edit mode if the id is set
@@ -104,7 +110,5 @@ export class RecipeFormComponent implements OnInit, OnDestroy {
       description: new FormControl(recipeDescription, Validators.required),
       ingredients: recipeIngredients
     });
-
-    console.log(this.recipeForm);
   }
 }
