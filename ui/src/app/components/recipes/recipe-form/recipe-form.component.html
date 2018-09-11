@@ -35,8 +35,8 @@
                 <div class="col-12">
                     <div class="form-group">
                         <label for="description">Description</label>
-                        <textarea type="text" formControlName="description" id="description" class="form-control" [ngClass]="{'is-invalid': (errors && errors.description)}"
-                            row="6"></textarea>
+                        <textarea type="text" formControlName="description" id="description" class="form-control"
+                            [ngClass]="{'is-invalid': (errors && errors.description)}" row="6"></textarea>
                         <div *ngIf="errors && errors.description" class="invalid-feedback">{{errors.description}}</div>
                     </div>
                 </div>
@@ -44,7 +44,8 @@
             <div class="row">
                 <div class="col-12" formArrayName="ingredients">
                     <label for="ingredients">Ingredients</label>
-                    <div class="row my-2" *ngFor="let ingredientsFormControl of recipeForm.get('ingredients').controls; let i = index;" [formGroupName]="i">
+                    <div class="row my-2" *ngFor="let ingredientsFormControl of recipeForm.get('ingredients')['controls']; let i = index;"
+                        [formGroupName]="i">
                         <input type="hidden" formControlName="id">
                         <div class="col-8">
                             <input type="text" class="form-control" formControlName="name">
@@ -59,7 +60,8 @@
                     <hr>
                     <div class="row">
                         <div class="col-12">
-                            <button type="button" class="btn btn-secondary" (click)="addIngredientInputGroup()">Add more
+                            <button type="button" class="btn btn-secondary" (click)="addIngredientInputGroup()">Add
+                                more
                                 Ingredients
                             </button>
                         </div>
