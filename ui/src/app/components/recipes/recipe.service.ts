@@ -148,16 +148,21 @@ export class RecipeService {
 
   // Delete Recipe Method
   deleteRecipe(id: number) {
+    this.store.dispatch(new RecipeLoading());
     this.http.delete(`/api/recipe/${id}`).subscribe(
       () => {
         const index = this.recipes.findIndex(
           recipeItem => recipeItem.id === id
         );
-        this.recipes.splice(index, 1);
-        this.recipesUpdated.next(this.recipes.slice());
+        const recipeData = this.recipes.slice();
+        recipeData.splice(index, 1);
+        this.store.dispatch(new SetRecipes(recipeData));
         this.router.navigate(['/recipes']);
       },
-      err => this.recipeFormErrors.next(err)
+      err => {
+        this.store.dispatch(new RecipeLoading());
+        this.recipeFormErrors.next(err);
+      }
     );
   }
 
