@@ -65,14 +65,9 @@ import { RecipeState } from './store/states/recipe.state';
     FormsModule,
     ReactiveFormsModule,
     NgbModule.forRoot(),
-    NgxsModule.forRoot([
-      ErrorsState,
-      AuthState,
-      ShoppingListState,
-      RecipeState
-    ]),
-    NgxsReduxDevtoolsPluginModule.forRoot(),
-    NgxsLoggerPluginModule.forRoot()
+    NgxsModule.forRoot([ErrorsState, AuthState, ShoppingListState, RecipeState])
+    // NgxsReduxDevtoolsPluginModule.forRoot(),
+    // NgxsLoggerPluginModule.forRoot()
   ],
   providers: [
     ShoppingListService,
