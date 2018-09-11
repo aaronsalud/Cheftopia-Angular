@@ -47,9 +47,11 @@ app.use('/api/recipe', recipe);
 // Server static assets if in production
 if (process.env.NODE_ENV === 'production') {
   // Set static folder
-  app.use(express.static('ui/build'));
+  app.use(express.static('ui/dist/Cheftopia-Angular'));
   app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'ui', 'build', 'index.html'));
+    res.sendFile(
+      path.resolve(__dirname, 'ui', 'dist', 'Cheftopia-Angular', 'index.html')
+    );
   });
 }
 
