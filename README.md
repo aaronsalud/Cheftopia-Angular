@@ -2,6 +2,8 @@
 
 This project is built with Angular 6, Node, Express, and PostgresSQL with Sequelize ORM. It is built for demo and educational purposes only.
 
+https://cheftopia.herokuapp.com
+
 ## Development server
 
 Run `npm run dev` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
