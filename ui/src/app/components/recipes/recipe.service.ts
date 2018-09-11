@@ -119,7 +119,7 @@ export class RecipeService {
       },
       err => {
         this.store.dispatch(new RecipeLoading());
-        this.store.dispatch(new SetErrors(err));
+        this.recipeFormErrors.next(err);
       }
     );
   }
