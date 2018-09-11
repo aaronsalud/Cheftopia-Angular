@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./recipe-detail.component.css']
 })
 export class RecipeDetailComponent implements OnInit, OnDestroy {
-  recipesUpdatedSubscription: Subscription;
+  activeRecipeSubscription: Subscription;
   recipe: Recipe;
   id: number;
 
@@ -34,17 +34,21 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.recipesUpdatedSubscription = this.recipeService.recipesUpdated.subscribe(
-      () => (this.recipe = this.recipeService.getRecipeById(this.id))
+    this.activeRecipeSubscription = this.recipeService.activeRecipe.subscribe(
+      recipe => (this.recipe = recipe)
     );
+
+    // this.recipesUpdatedSubscription = this.recipeService.recipesUpdated.subscribe(
+    //   () => (this.recipe = this.recipeService.getRecipeById(this.id))
+    // );
 
     this.route.params.subscribe((params: Params) => {
       this.id = +params['id'];
-      this.recipe = this.recipeService.getRecipeById(this.id);
+      this.recipeService.getRecipeById(this.id);
     });
   }
 
   ngOnDestroy() {
-    this.recipesUpdatedSubscription.unsubscribe();
+    this.activeRecipeSubscription.unsubscribe();
   }
 }
