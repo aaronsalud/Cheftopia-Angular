@@ -6,7 +6,11 @@ import { Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Store } from '@ngxs/store';
-import { SetRecipes, RecipeLoading } from '../../store/actions/recipe.actions';
+import {
+  SetRecipes,
+  RecipeLoading,
+  SetRecipe
+} from '../../store/actions/recipe.actions';
 import { SetErrors } from '../../store/actions/errors.actions';
 
 @Injectable()
@@ -73,9 +77,12 @@ export class RecipeService {
   }
 
   getRecipeById(id: number) {
-    return this.recipes && this.recipes.length > 0
-      ? this.recipes.filter((recipe: Recipe) => recipe.id === id)[0]
-      : null;
+    const recipe =
+      this.recipes && this.recipes.length > 0
+        ? this.recipes.filter((recipe: Recipe) => recipe.id === id)[0]
+        : null;
+
+    this.store.dispatch(new SetRecipe(recipe));
   }
 
   // Fetch Recipes Method
@@ -100,6 +107,7 @@ export class RecipeService {
 
   // Create Recipe Method
   addRecipe(recipe: Recipe) {
+    this.store.dispatch(new RecipeLoading());
     this.http.post('/api/recipe', recipe).subscribe(
       (recipe: any) => {
         if (recipe) {
@@ -118,6 +126,7 @@ export class RecipeService {
 
   // Update Recipe Method
   editRecipe(id: number, recipe: Recipe) {
+    this.store.dispatch(new RecipeLoading());
     this.http.put(`/api/recipe/${id}`, recipe).subscribe(
       (recipe: any) => {
         if (recipe) {
@@ -130,7 +139,10 @@ export class RecipeService {
           this.router.navigate(['../'], { relativeTo: this.route });
         }
       },
-      err => this.recipeFormErrors.next(err)
+      err => {
+        this.store.dispatch(new RecipeLoading());
+        this.recipeFormErrors.next(err);
+      }
     );
   }
 
