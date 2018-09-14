@@ -18,7 +18,7 @@ export class RecipeService {
   recipesUpdated = new Subject<Recipe[]>();
   activeRecipe: Subject<Recipe> = new Subject();
   recipeFormErrors = new Subject();
-  recipeLoading = new Subject();
+  recipeLoading: Subject<boolean> = new Subject();
   recipes: Recipe[];
   recipe: Recipe;
 
