@@ -47,6 +47,7 @@ export class RecipeState {
   @Action(RecipeLoading)
   recipeLoading({ patchState, getState }: StateContext<RecipeStateModel>) {
     const state = getState();
+
     patchState({
       loading: !state.loading
     });
